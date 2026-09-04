@@ -1,0 +1,20 @@
+{
+  "name": "Portal Support Equipment",
+  "short_name": "Portal SE",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "https://lh3.googleusercontent.com/d/1x2INLTU76tuRcg_e4l3TLHeKBrXg4z6N",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://lh3.googleusercontent.com/d/1x2INLTU76tuRcg_e4l3TLHeKBrXg4z6N",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
