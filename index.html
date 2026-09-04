@@ -28,16 +28,18 @@
         import { 
           Settings, ExternalLink, ChevronRight, ChevronLeft, 
           X, Save, User, HardHat, Truck, Car, Wrench, FileText, Anchor,
-          Droplet, Users, GraduationCap, ClipboardEdit, Plus, Trash2, Loader2, Menu
+          Droplet, Users, GraduationCap, ClipboardEdit, Plus, Trash2, Loader2, Menu,
+          Lock
         } from 'lucide-react';
 
         const APPSCRIPT_URL = "https://script.google.com/macros/s/AKfycbxkJl7PeW5VQVX4errbzpm8psAMp5RxzAPnzqCA0Smj_r3mDgRylWC-1So5ZJl2jr6d5g/exec"; 
 
         const defaultData = {
+          settingsPassword: "123456Fa", // Kata sandi bawaan
           hero: {
             title: "Portal Support Equipment",
             subtitle: "Pusat Informasi Operasional, Pemeliharaan, dan Manajemen Divisi",
-            imageUrl: "https://lh3.googleusercontent.com/d/1x2INLTU76tuRcg_e4l3TLHeKBrXg4z6N",
+            imageUrl: "", 
             logoUrl: ""
           },
           about: "Section Support Equipment bertindak sebagai tulang punggung operasional yang menjamin kelancaran, efisiensi, dan keselamatan kerja seluruh tim di lapangan. Kami bertanggung jawab memfasilitasi kebutuhan teknis lapangan secara menyeluruh, mulai dari perawatan rutin armada seperti pengisian pelumas, greasing, dan pembersihan unit, hingga penanganan serta pengangkutan material berat secara aman dan terintegrasi.",
@@ -45,7 +47,7 @@
           slides: [
             {
               id: "s1", title: "Pemeliharaan (Maintenance)",
-              imageUrl: "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&q=80",
+              imageUrl: "",
               links: [
                 { id: "l1", label: "Form Permintaan Sparepart", url: "https://google.com" },
                 { id: "l2", label: "Log Kerusakan Harian", url: "https://google.com" }
@@ -53,7 +55,7 @@
             },
             {
               id: "s2", title: "Operasional Unit",
-              imageUrl: "https://images.unsplash.com/photo-1519003722824-194d4455a60c?auto=format&fit=crop&q=80",
+              imageUrl: "",
               links: [
                 { id: "l3", label: "Jadwal Penggunaan Unit", url: "https://google.com" },
                 { id: "l4", label: "Checklist Kelayakan", url: "https://google.com" }
@@ -61,7 +63,7 @@
             },
             {
               id: "s3", title: "Manajemen K3 (HSE)",
-              imageUrl: "https://images.unsplash.com/photo-1541888081622-386088924b22?auto=format&fit=crop&q=80",
+              imageUrl: "",
               links: [
                 { id: "l5", label: "Laporan Insiden", url: "https://google.com" },
                 { id: "l6", label: "Panduan Keselamatan", url: "https://google.com" }
@@ -99,10 +101,15 @@
           
           const [loading, setLoading] = useState(true);
           const [activeSlide, setActiveSlide] = useState(0);
-          const [isSettingsOpen, setIsSettingsOpen] = useState(false);
           const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+          
+          // State Settings & Security
+          const [isSettingsOpen, setIsSettingsOpen] = useState(false);
           const [settingsDraft, setSettingsDraft] = useState(defaultData);
           const [activeSettingsTab, setActiveSettingsTab] = useState('general');
+          const [isPasswordPromptOpen, setIsPasswordPromptOpen] = useState(false);
+          const [passwordInput, setPasswordInput] = useState("");
+          const [showPasswordError, setShowPasswordError] = useState(false);
 
           const touchStartX = useRef(null);
           const touchEndX = useRef(null);
@@ -126,6 +133,19 @@
             };
             fetchData();
           }, []);
+
+          const handlePasswordSubmit = () => {
+            // Ambil sandi dari data saat ini, jika kosong gunakan default
+            const currentPassword = data.settingsPassword || "123456Fa";
+            if (passwordInput === currentPassword) {
+              setIsPasswordPromptOpen(false);
+              setSettingsDraft(JSON.parse(JSON.stringify(data)));
+              setIsSettingsOpen(true);
+              setPasswordInput("");
+            } else {
+              setShowPasswordError(true);
+            }
+          };
 
           const handleDragStart = (e) => {
             touchStartX.current = e.touches ? e.touches[0].clientX : e.clientX;
@@ -188,7 +208,6 @@
           return (
             <div className="min-h-screen bg-gray-50 font-sans text-slate-800 flex flex-col relative">
               
-              {/* Header Navigation */}
               <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                   <div className="flex items-center cursor-pointer" onClick={() => window.scrollTo(0,0)}>
@@ -201,23 +220,34 @@
                     )}
                   </div>
                   
-                  {/* Desktop Menu */}
-                  <nav className="hidden md:flex items-center gap-8 font-medium text-slate-600">
-                    <a href="#menu" className="hover:text-blue-600 transition-colors py-2">Menu</a>
-                    <a href="#tentang-se" className="hover:text-blue-600 transition-colors py-2">Tentang</a>
-                    <a href="#populasi" className="hover:text-blue-600 transition-colors py-2">Populasi</a>
-                  </nav>
+                  <div className="flex items-center gap-1 sm:gap-6">
+                    <nav className="hidden md:flex items-center gap-8 font-medium text-slate-600 mr-2">
+                      <a href="#menu" className="hover:text-blue-600 transition-colors py-2">Menu</a>
+                      <a href="#tentang-se" className="hover:text-blue-600 transition-colors py-2">Tentang</a>
+                      <a href="#populasi" className="hover:text-blue-600 transition-colors py-2">Populasi</a>
+                    </nav>
 
-                  {/* Mobile Menu Toggle Button */}
-                  <button 
-                    className="md:hidden p-2 text-slate-600 hover:text-blue-600 transition-colors"
-                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                  >
-                    {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-                  </button>
+                    <button 
+                      onClick={() => {
+                        setShowPasswordError(false);
+                        setPasswordInput("");
+                        setIsPasswordPromptOpen(true);
+                      }}
+                      className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+                      title="Pengaturan Portal"
+                    >
+                      <Settings className="w-5 h-5" />
+                    </button>
+
+                    <button 
+                      className="md:hidden p-2 text-slate-600 hover:text-blue-600 transition-colors"
+                      onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                    >
+                      {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                    </button>
+                  </div>
                 </div>
                 
-                {/* Mobile Menu Dropdown */}
                 {isMobileMenuOpen && (
                   <div className="md:hidden absolute top-16 left-0 w-full bg-white shadow-lg border-b border-gray-200 flex flex-col py-3 px-6 gap-2 z-40">
                     <a href="#menu" onClick={() => setIsMobileMenuOpen(false)} className="font-medium text-slate-600 hover:text-blue-600 py-3 border-b border-gray-50">Menu</a>
@@ -230,7 +260,9 @@
               <main className="flex-1 pb-10">
                 <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
                   <div className="relative w-full h-[250px] sm:h-[350px] rounded-3xl overflow-hidden shadow-xl group bg-slate-900">
-                    <img src={data.hero?.imageUrl} alt="Hero" className="w-full h-full object-cover opacity-80 transition-transform duration-1000 group-hover:scale-105" />
+                    {data.hero?.imageUrl && (
+                        <img src={data.hero?.imageUrl} alt="Hero" className="w-full h-full object-cover opacity-80 transition-transform duration-1000 group-hover:scale-105" />
+                    )}
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent"></div>
                     <div className="absolute bottom-0 left-0 w-full p-6 sm:p-10 text-white">
                       <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mb-2 drop-shadow-md">{data.hero?.title}</h1>
@@ -268,7 +300,9 @@
                       onMouseDown={handleDragStart} onMouseMove={handleDragMove} onMouseUp={handleDragEnd} onMouseLeave={handleMouseLeave}>
                       {data.slides.map((slide, index) => (
                         <div key={slide.id} className={`absolute w-[130px] sm:w-[170px] h-[180px] sm:h-[240px] transition-all duration-700 ease-out bg-transparent ${getSlideStyle(index)}`} onClick={() => setActiveSlide(index)}>
-                          <img draggable={false} src={slide.imageUrl} alt={slide.title} className="w-full h-full object-cover rounded-2xl sm:rounded-3xl select-none pointer-events-none drop-shadow-xl" />
+                          {slide.imageUrl && (
+                              <img draggable={false} src={slide.imageUrl} alt={slide.title} className="w-full h-full object-cover rounded-2xl sm:rounded-3xl select-none pointer-events-none drop-shadow-xl" />
+                          )}
                           <div className={`absolute bottom-3 w-full px-2 transition-opacity duration-300 flex justify-center ${index === activeSlide ? 'opacity-100' : 'opacity-0'}`}>
                             <span className="bg-slate-900/70 backdrop-blur-sm text-white text-[10px] sm:text-xs font-semibold px-3 py-1.5 rounded-full shadow-sm text-center truncate w-full border border-white/20">{slide.title}</span>
                           </div>
@@ -315,7 +349,6 @@
                         <h2 className="text-xl font-bold text-slate-400 uppercase tracking-widest">Populasi Manpower</h2>
                       </div>
                       
-                      {/* Grid 3 Kolom di Mobile, 4 di Desktop */}
                       <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 gap-y-12 gap-x-2 sm:gap-8 justify-items-center">
                         {data.manpower.map((stat, idx) => (
                           <div key={stat.id || idx} className="flex flex-col items-center group w-full text-center">
@@ -337,7 +370,6 @@
                         <h2 className="text-xl font-bold text-slate-400 uppercase tracking-widest">Populasi Unit</h2>
                       </div>
 
-                      {/* Grid 3 Kolom di Mobile, 3 di Desktop */}
                       <div className="grid grid-cols-3 md:grid-cols-3 gap-y-12 gap-x-2 sm:gap-8 justify-items-center">
                         {data.units.map((stat, idx) => (
                           <div key={stat.id || idx} className="flex flex-col items-center group w-full text-center">
@@ -358,16 +390,45 @@
                 </section>
               </main>
 
-              {}
               <footer className="border-t-2 border-gray-200 mt-auto bg-white py-6">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex justify-center items-center">
                   <span className="italic text-slate-400/70 text-sm font-medium">created by fadillahm</span>
-                  <button onClick={() => { setSettingsDraft(JSON.parse(JSON.stringify(data))); setIsSettingsOpen(true); }} className="p-2.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors flex items-center gap-2" title="Pengaturan Portal">
-                    <Settings className="w-5 h-5" /><span className="text-sm font-medium sm:hidden">Pengaturan</span>
-                  </button>
                 </div>
               </footer>
 
+              {/* Modal Password Prompt */}
+              {isPasswordPromptOpen && (
+                <div className="fixed inset-0 z-[110] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+                  <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden p-6 text-center transform transition-all">
+                    <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Lock className="w-8 h-8" />
+                    </div>
+                    <h3 className="text-xl font-bold text-slate-800 mb-2">Akses Terkunci</h3>
+                    <p className="text-sm text-slate-500 mb-6">Masukkan kata sandi untuk mengubah data portal.</p>
+                    <input 
+                      type="password" 
+                      value={passwordInput} 
+                      onChange={(e) => { setPasswordInput(e.target.value); setShowPasswordError(false); }}
+                      onKeyDown={(e) => { if(e.key === 'Enter') handlePasswordSubmit(); }}
+                      className={`w-full p-3 border ${showPasswordError ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'} rounded-xl mb-2 focus:ring-2 focus:outline-none text-center tracking-widest font-medium`}
+                      placeholder="••••••••"
+                      autoFocus
+                    />
+                    {showPasswordError ? (
+                      <p className="text-red-500 text-xs text-center mb-4">Kata sandi yang Anda masukkan salah.</p>
+                    ) : (
+                      <p className="text-transparent text-xs text-center mb-4 select-none">.</p> // Placeholder spacing
+                    )}
+                    
+                    <div className="flex gap-3 mt-2">
+                      <button onClick={() => setIsPasswordPromptOpen(false)} className="flex-1 py-2.5 rounded-xl font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors">Batal</button>
+                      <button onClick={handlePasswordSubmit} className="flex-1 py-2.5 rounded-xl font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/30">Masuk</button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Modal Pengaturan */}
               {isSettingsOpen && (
                 <div className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
                   <div className="bg-white rounded-3xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col">
@@ -382,7 +443,13 @@
                     
                     <div className="flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col md:flex-row gap-6">
                       <div className="w-full md:w-64 space-y-2 shrink-0">
-                        {[{ id: 'general', label: 'Umum & Teks' }, { id: 'slides', label: 'Slider & Akses Cepat' }, { id: 'manpower', label: 'Data Manpower' }, { id: 'units', label: 'Data Unit' }].map(tab => (
+                        {[
+                          { id: 'general', label: 'Umum & Teks' }, 
+                          { id: 'slides', label: 'Slider & Akses Cepat' }, 
+                          { id: 'manpower', label: 'Data Manpower' }, 
+                          { id: 'units', label: 'Data Unit' },
+                          { id: 'security', label: 'Keamanan (Password)' }
+                        ].map(tab => (
                           <button key={tab.id} onClick={() => setActiveSettingsTab(tab.id)} className={`w-full text-left px-4 py-3 rounded-xl font-medium transition-colors ${activeSettingsTab === tab.id ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-50 text-gray-600 hover:bg-gray-100'}`}>{tab.label}</button>
                         ))}
                       </div>
@@ -450,6 +517,26 @@
                               </div>
                             ))}
                             <button onClick={() => setSettingsDraft({ ...settingsDraft, units: [...settingsDraft.units, { id: Date.now().toString(), label: "Baru", count: 0, icon: "Truck" }]})} className="w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 hover:text-orange-600 hover:bg-orange-50"><Plus className="w-5 h-5" /> Tambah Data</button>
+                          </div>
+                        )}
+                        
+                        {activeSettingsTab === 'security' && (
+                          <div className="space-y-5">
+                            <div className="bg-blue-50 p-4 rounded-2xl border border-blue-100">
+                              <h3 className="text-blue-800 font-bold mb-2 flex items-center gap-2">
+                                <Lock className="w-5 h-5" /> Ubah Kata Sandi
+                              </h3>
+                              <p className="text-sm text-blue-600 mb-4">Ganti kata sandi bawaan agar tidak sembarang orang bisa mengakses pengaturan portal.</p>
+                              
+                              <label className="block text-sm font-semibold text-blue-900 mb-1">Kata Sandi Baru</label>
+                              <input 
+                                type="text" 
+                                value={settingsDraft.settingsPassword || ''} 
+                                onChange={e => setSettingsDraft({...settingsDraft, settingsPassword: e.target.value})} 
+                                className="w-full p-3 border border-blue-200 rounded-xl bg-white focus:ring-2 focus:ring-blue-500 tracking-wide font-medium" 
+                                placeholder="Masukkan kata sandi baru"
+                              />
+                            </div>
                           </div>
                         )}
                       </div>
