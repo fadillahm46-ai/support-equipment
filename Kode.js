@@ -34,3 +34,9 @@ function doGet(e) {
       .setMimeType(ContentService.MimeType.JSON);
   }
 }
+
+// Fungsi wajib untuk menangani CORS Preflight dari Vercel
+function doOptions(e) {
+  return ContentService.createTextOutput("")
+    .setMimeType(ContentService.MimeType.TEXT);
+}
