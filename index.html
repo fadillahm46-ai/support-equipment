@@ -30,7 +30,7 @@
     import {
       Settings, ExternalLink, ChevronRight, ChevronLeft,
       X, Save, User, HardHat, Truck, Car, Wrench, FileText, Anchor,
-      Droplet, Users, GraduationCap, ClipboardEdit, Plus, Trash2
+      Droplet, Users, GraduationCap, ClipboardEdit, Plus, Trash2, Loader2
     } from 'lucide-react';
 
     const APPSCRIPT_URL = "https://script.google.com/macros/s/AKfycbxkJl7PeW5VQVX4errbzpm8psAMp5RxzAPnzqCA0Smj_r3mDgRylWC-1So5ZJl2jr6d5g/exec";
@@ -178,17 +178,17 @@
         }
       };
 
-      if (loading) return <div className="min-h-screen flex items-center justify-center bg-gray-50 text-slate-500 font-bold animate-pulse text-xl">Memuat Portal dari Google Sheet...</div>;
-
       return (
         <div className="min-h-screen bg-gray-50 font-sans text-slate-800 flex flex-col">
           <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200 shadow-sm">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
               <div className="flex items-center cursor-pointer" onClick={() => window.scrollTo(0, 0)}>
                 {data.hero?.logoUrl ? (
-                  <img src={data.hero.logoUrl} alt="Logo Perusahaan" className="h-10 sm:h-12 w-auto max-w-[250px] object-contain drop-shadow-sm" />
+                  <img src={data.hero.logoUrl} alt="Logo Perusahaan" className={`h-10 sm:h-12 w-auto max-w-[250px] object-contain drop-shadow-sm ${loading ? 'opacity-50 animate-pulse' : ''}`} />
                 ) : (
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-600 to-orange-500 text-white rounded-xl flex items-center justify-center font-black text-xl shadow-md">SE</div>
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-600 to-orange-500 text-white rounded-xl flex items-center justify-center font-black text-xl shadow-md">
+                    {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "SE"}
+                  </div>
                 )}
               </div>
               <nav className="flex items-center gap-4 sm:gap-8 font-medium text-slate-600">
