@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Portal Support Equipment</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#1e293b">
-
-  <script type="importmap">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Portal Support Equipment</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1e293b">
+    
+    <script type="importmap">
     {
         "imports": {
             "react": "https://esm.sh/react@18.2.0",
@@ -18,415 +17,459 @@
         }
     }
     </script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased overflow-x-hidden">
+    <div id="root"></div>
 
-<body class="bg-gray-100 text-gray-800 font-sans antialiased overflow-x-hidden">
-  <div id="root"></div>
+    <script type="text/babel" data-type="module">
+        import React, { useState, useEffect, useRef } from 'react';
+        import { createRoot } from 'react-dom/client';
+        import { 
+          Settings, ExternalLink, ChevronRight, ChevronLeft, 
+          X, Save, User, HardHat, Truck, Car, Wrench, FileText, Anchor,
+          Droplet, Users, GraduationCap, ClipboardEdit, Plus, Trash2, Loader2, Menu
+        } from 'lucide-react';
 
-  <script type="text/babel" data-type="module">
-    import React, { useState, useEffect, useRef } from 'react';
-    import { createRoot } from 'react-dom/client';
-    import {
-      Settings, ExternalLink, ChevronRight, ChevronLeft,
-      X, Save, User, HardHat, Truck, Car, Wrench, FileText, Anchor,
-      Droplet, Users, GraduationCap, ClipboardEdit, Plus, Trash2, Loader2
-    } from 'lucide-react';
+        const APPSCRIPT_URL = "https://script.google.com/macros/s/AKfycbxkJl7PeW5VQVX4errbzpm8psAMp5RxzAPnzqCA0Smj_r3mDgRylWC-1So5ZJl2jr6d5g/exec"; 
 
-    const APPSCRIPT_URL = "https://script.google.com/macros/s/AKfycbxkJl7PeW5VQVX4errbzpm8psAMp5RxzAPnzqCA0Smj_r3mDgRylWC-1So5ZJl2jr6d5g/exec";
-
-    const defaultData = {
-      hero: {
-        title: "Portal Support Equipment",
-        subtitle: "Pusat Informasi Operasional, Pemeliharaan, dan Manajemen Divisi",
-        imageUrl: "https://lh3.googleusercontent.com/d/1x2INLTU76tuRcg_e4l3TLHeKBrXg4z6N",
-        logoUrl: ""
-      },
-      about: "Divisi Support Equipment berdedikasi untuk memastikan seluruh alat berat, kendaraan operasional, dan perlengkapan logistik selalu dalam kondisi prima. Kami mendukung kelancaran operasional harian dengan standar keselamatan tinggi.",
-      slides: [
-        {
-          id: "s1", title: "Pemeliharaan (Maintenance)",
-          imageUrl: "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&q=80",
-          links: [
-            { id: "l1", label: "Form Permintaan Sparepart", url: "https://google.com" },
-            { id: "l2", label: "Log Kerusakan Harian", url: "https://google.com" }
+        const defaultData = {
+          hero: {
+            title: "Portal Support Equipment",
+            subtitle: "Pusat Informasi Operasional, Pemeliharaan, dan Manajemen Divisi",
+            imageUrl: "https://lh3.googleusercontent.com/d/1x2INLTU76tuRcg_e4l3TLHeKBrXg4z6N",
+            logoUrl: ""
+          },
+          about: "Section Support Equipment bertindak sebagai tulang punggung operasional yang menjamin kelancaran, efisiensi, dan keselamatan kerja seluruh tim di lapangan. Kami bertanggung jawab memfasilitasi kebutuhan teknis lapangan secara menyeluruh, mulai dari perawatan rutin armada seperti pengisian pelumas, greasing, dan pembersihan unit, hingga penanganan serta pengangkutan material berat secara aman dan terintegrasi.",
+          aboutImageUrl: "",
+          slides: [
+            {
+              id: "s1", title: "Pemeliharaan (Maintenance)",
+              imageUrl: "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&q=80",
+              links: [
+                { id: "l1", label: "Form Permintaan Sparepart", url: "https://google.com" },
+                { id: "l2", label: "Log Kerusakan Harian", url: "https://google.com" }
+              ]
+            },
+            {
+              id: "s2", title: "Operasional Unit",
+              imageUrl: "https://images.unsplash.com/photo-1519003722824-194d4455a60c?auto=format&fit=crop&q=80",
+              links: [
+                { id: "l3", label: "Jadwal Penggunaan Unit", url: "https://google.com" },
+                { id: "l4", label: "Checklist Kelayakan", url: "https://google.com" }
+              ]
+            },
+            {
+              id: "s3", title: "Manajemen K3 (HSE)",
+              imageUrl: "https://images.unsplash.com/photo-1541888081622-386088924b22?auto=format&fit=crop&q=80",
+              links: [
+                { id: "l5", label: "Laporan Insiden", url: "https://google.com" },
+                { id: "l6", label: "Panduan Keselamatan", url: "https://google.com" }
+              ]
+            }
+          ],
+          manpower: [
+            { id: "m1", label: "Staf", count: 12, icon: "User" },
+            { id: "m2", label: "Admin", count: 8, icon: "ClipboardEdit" },
+            { id: "m3", label: "Driver LV", count: 35, icon: "Car" },
+            { id: "m4", label: "Operator WT", count: 20, icon: "Droplet" },
+            { id: "m5", label: "Operator Exca", count: 15, icon: "HardHat" },
+            { id: "m6", label: "Rigger", count: 10, icon: "Anchor" },
+            { id: "m7", label: "Oiler", count: 5, icon: "Wrench" },
+            { id: "m8", label: "Washingman", count: 4, icon: "Users" },
+          ],
+          units: [
+            { id: "u1", label: "Light Truck (LT)", count: 24, icon: "Truck" },
+            { id: "u2", label: "Water Truck (WT)", count: 12, icon: "Droplet" },
+            { id: "u3", label: "Crane Truck (CT)", count: 6, icon: "Anchor" }
           ]
-        },
-        {
-          id: "s2", title: "Operasional Unit",
-          imageUrl: "https://images.unsplash.com/photo-1519003722824-194d4455a60c?auto=format&fit=crop&q=80",
-          links: [
-            { id: "l3", label: "Jadwal Penggunaan Unit", url: "https://google.com" },
-            { id: "l4", label: "Checklist Kelayakan", url: "https://google.com" }
-          ]
-        },
-        {
-          id: "s3", title: "Manajemen K3 (HSE)",
-          imageUrl: "https://images.unsplash.com/photo-1541888081622-386088924b22?auto=format&fit=crop&q=80",
-          links: [
-            { id: "l5", label: "Laporan Insiden", url: "https://google.com" },
-            { id: "l6", label: "Panduan Keselamatan", url: "https://google.com" }
-          ]
-        }
-      ],
-      manpower: [
-        { id: "m1", label: "Staf", count: 12, icon: "User" },
-        { id: "m2", label: "Admin", count: 8, icon: "ClipboardEdit" },
-        { id: "m3", label: "Driver LV", count: 35, icon: "Car" },
-        { id: "m4", label: "Operator WT", count: 20, icon: "Droplet" },
-        { id: "m5", label: "Operator Exca", count: 15, icon: "HardHat" },
-        { id: "m6", label: "Rigger", count: 10, icon: "Anchor" },
-        { id: "m7", label: "Oiler", count: 5, icon: "Wrench" },
-        { id: "m8", label: "Washingman", count: 4, icon: "Users" },
-      ],
-      units: [
-        { id: "u1", label: "Light Truck (LT)", count: 24, icon: "Truck" },
-        { id: "u2", label: "Water Truck (WT)", count: 12, icon: "Droplet" },
-        { id: "u3", label: "Crane Truck (CT)", count: 6, icon: "Anchor" }
-      ]
-    };
-
-    const IconMapper = ({ name, size = 24, className = "" }) => {
-      const icons = { User, HardHat, Truck, Car, Wrench, FileText, Anchor, Droplet, Users, GraduationCap, ClipboardEdit };
-      const IconComponent = icons[name] || FileText;
-      return <IconComponent size={size} className={className} />;
-    };
-
-    function App() {
-      const [data, setData] = useState(defaultData);
-      const [loading, setLoading] = useState(true);
-
-      const [activeSlide, setActiveSlide] = useState(0);
-      const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-      const [settingsDraft, setSettingsDraft] = useState(defaultData);
-      const [activeSettingsTab, setActiveSettingsTab] = useState('general');
-
-      const touchStartX = useRef(null);
-      const touchEndX = useRef(null);
-      const isDragging = useRef(false);
-      const minSwipeDistance = 50;
-
-      useEffect(() => {
-        const fetchData = async () => {
-          try {
-            const response = await fetch(APPSCRIPT_URL);
-            const sheetData = await response.json();
-            if (sheetData && !sheetData.message) setData(sheetData);
-          } catch (error) {
-            console.warn("Gagal mengambil data dari Google Sheet:", error);
-          } finally {
-            setLoading(false);
-          }
         };
-        fetchData();
-      }, []);
 
-      const handleDragStart = (e) => {
-        touchStartX.current = e.touches ? e.touches[0].clientX : e.clientX;
-        isDragging.current = true;
-      };
+        const IconMapper = ({ name, size = 24, className = "" }) => {
+          const icons = { User, HardHat, Truck, Car, Wrench, FileText, Anchor, Droplet, Users, GraduationCap, ClipboardEdit };
+          const IconComponent = icons[name] || FileText;
+          return <IconComponent size={size} className={className} />;
+        };
 
-      const handleDragMove = (e) => {
-        if (!isDragging.current) return;
-        touchEndX.current = e.touches ? e.touches[0].clientX : e.clientX;
-      };
-
-      const handleDragEnd = () => {
-        if (!isDragging.current) return;
-        isDragging.current = false;
-        if (!touchStartX.current || !touchEndX.current) return;
-        const distance = touchStartX.current - touchEndX.current;
-        if (distance > minSwipeDistance) handleNextSlide();
-        else if (distance < -minSwipeDistance) handlePrevSlide();
-        touchStartX.current = null;
-        touchEndX.current = null;
-      };
-
-      const handleMouseLeave = () => {
-        isDragging.current = false;
-        touchStartX.current = null;
-        touchEndX.current = null;
-      };
-
-      const handleNextSlide = () => setActiveSlide((prev) => (prev + 1) % data.slides.length);
-      const handlePrevSlide = () => setActiveSlide((prev) => (prev - 1 + data.slides.length) % data.slides.length);
-
-      const getSlideStyle = (index) => {
-        const length = data.slides.length;
-        let offset = (index - activeSlide + length) % length;
-        if (offset > Math.floor(length / 2)) offset -= length;
-
-        if (offset === 0) return "translate-x-0 scale-100 opacity-100 z-30 drop-shadow-2xl";
-        if (offset === 1 || (offset < 0 && index === activeSlide + 1)) return "translate-x-[90%] sm:translate-x-[110%] scale-[0.8] opacity-50 z-20 cursor-pointer hover:opacity-75 blur-[1px] drop-shadow-md";
-        if (offset === -1 || (offset > 0 && index === activeSlide - 1)) return "-translate-x-[90%] sm:-translate-x-[110%] scale-[0.8] opacity-50 z-20 cursor-pointer hover:opacity-75 blur-[1px] drop-shadow-md";
-        return "translate-x-0 scale-50 opacity-0 z-0 pointer-events-none";
-      };
-
-      const handleSaveSettings = async () => {
-        setData(settingsDraft);
-        setIsSettingsOpen(false);
-        try {
-          await fetch(APPSCRIPT_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify(settingsDraft)
+        function App() {
+          const [data, setData] = useState(() => {
+            const savedData = localStorage.getItem('portalDataSE');
+            return savedData ? JSON.parse(savedData) : defaultData;
           });
-          alert("Data berhasil disimpan ke Google Spreadsheet!");
-        } catch (err) {
-          console.error("Gagal menyimpan ke Spreadsheet:", err);
-          alert("Gagal menyimpan data ke server Google Sheet.");
-        }
-      };
+          
+          const [loading, setLoading] = useState(true);
+          const [activeSlide, setActiveSlide] = useState(0);
+          const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+          const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+          const [settingsDraft, setSettingsDraft] = useState(defaultData);
+          const [activeSettingsTab, setActiveSettingsTab] = useState('general');
 
-      return (
-        <div className="min-h-screen bg-gray-50 font-sans text-slate-800 flex flex-col">
-          <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200 shadow-sm">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-              <div className="flex items-center cursor-pointer" onClick={() => window.scrollTo(0, 0)}>
-                {data.hero?.logoUrl ? (
-                  <img src={data.hero.logoUrl} alt="Logo Perusahaan" className={`h-10 sm:h-12 w-auto max-w-[250px] object-contain drop-shadow-sm ${loading ? 'opacity-50 animate-pulse' : ''}`} />
-                ) : (
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-600 to-orange-500 text-white rounded-xl flex items-center justify-center font-black text-xl shadow-md">
-                    {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "SE"}
+          const touchStartX = useRef(null);
+          const touchEndX = useRef(null);
+          const isDragging = useRef(false);
+          const minSwipeDistance = 50;
+
+          useEffect(() => {
+            const fetchData = async () => {
+              try {
+                const response = await fetch(APPSCRIPT_URL); 
+                const sheetData = await response.json();
+                if (sheetData && !sheetData.message) {
+                  setData(sheetData);
+                  localStorage.setItem('portalDataSE', JSON.stringify(sheetData));
+                }
+              } catch (error) {
+                console.warn("Gagal mengambil data dari Google Sheet:", error);
+              } finally {
+                setLoading(false);
+              }
+            };
+            fetchData();
+          }, []);
+
+          const handleDragStart = (e) => {
+            touchStartX.current = e.touches ? e.touches[0].clientX : e.clientX;
+            isDragging.current = true;
+          };
+
+          const handleDragMove = (e) => {
+            if (!isDragging.current) return;
+            touchEndX.current = e.touches ? e.touches[0].clientX : e.clientX;
+          };
+
+          const handleDragEnd = () => {
+            if (!isDragging.current) return;
+            isDragging.current = false;
+            if (!touchStartX.current || !touchEndX.current) return;
+            const distance = touchStartX.current - touchEndX.current;
+            if (distance > minSwipeDistance) handleNextSlide();
+            else if (distance < -minSwipeDistance) handlePrevSlide();
+            touchStartX.current = null;
+            touchEndX.current = null;
+          };
+
+          const handleMouseLeave = () => {
+            isDragging.current = false;
+            touchStartX.current = null;
+            touchEndX.current = null;
+          };
+
+          const handleNextSlide = () => setActiveSlide((prev) => (prev + 1) % data.slides.length);
+          const handlePrevSlide = () => setActiveSlide((prev) => (prev - 1 + data.slides.length) % data.slides.length);
+
+          const getSlideStyle = (index) => {
+            const length = data.slides.length;
+            let offset = (index - activeSlide + length) % length;
+            if (offset > Math.floor(length / 2)) offset -= length;
+
+            if (offset === 0) return "translate-x-0 scale-100 opacity-100 z-30 drop-shadow-2xl";
+            if (offset === 1 || (offset < 0 && index === activeSlide + 1)) return "translate-x-[90%] sm:translate-x-[110%] scale-[0.8] opacity-50 z-20 cursor-pointer hover:opacity-75 blur-[1px] drop-shadow-md";
+            if (offset === -1 || (offset > 0 && index === activeSlide - 1)) return "-translate-x-[90%] sm:-translate-x-[110%] scale-[0.8] opacity-50 z-20 cursor-pointer hover:opacity-75 blur-[1px] drop-shadow-md";
+            return "translate-x-0 scale-50 opacity-0 z-0 pointer-events-none";
+          };
+
+          const handleSaveSettings = async () => {
+            setData(settingsDraft); 
+            localStorage.setItem('portalDataSE', JSON.stringify(settingsDraft));
+            setIsSettingsOpen(false);
+            try {
+              await fetch(APPSCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
+                body: JSON.stringify(settingsDraft)
+              });
+              alert("Data berhasil disimpan ke Google Spreadsheet!");
+            } catch (err) {
+              console.error("Gagal menyimpan ke Spreadsheet:", err);
+              alert("Gagal menyimpan data ke server Google Sheet.");
+            }
+          };
+
+          return (
+            <div className="min-h-screen bg-gray-50 font-sans text-slate-800 flex flex-col relative">
+              
+              {/* Header Navigation */}
+              <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+                  <div className="flex items-center cursor-pointer" onClick={() => window.scrollTo(0,0)}>
+                    {data.hero?.logoUrl ? (
+                      <img src={data.hero.logoUrl} alt="Logo Perusahaan" className={`h-8 sm:h-12 w-auto max-w-[200px] sm:max-w-[250px] object-contain drop-shadow-sm ${loading ? 'opacity-50 animate-pulse' : ''}`} />
+                    ) : (
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-600 to-orange-500 text-white rounded-xl flex items-center justify-center font-black text-xl shadow-md">
+                        {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "SE"}
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Desktop Menu */}
+                  <nav className="hidden md:flex items-center gap-8 font-medium text-slate-600">
+                    <a href="#menu" className="hover:text-blue-600 transition-colors py-2">Menu</a>
+                    <a href="#tentang-se" className="hover:text-blue-600 transition-colors py-2">Tentang</a>
+                    <a href="#populasi" className="hover:text-blue-600 transition-colors py-2">Populasi</a>
+                  </nav>
+
+                  {/* Mobile Menu Toggle Button */}
+                  <button 
+                    className="md:hidden p-2 text-slate-600 hover:text-blue-600 transition-colors"
+                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                  >
+                    {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                  </button>
+                </div>
+                
+                {/* Mobile Menu Dropdown */}
+                {isMobileMenuOpen && (
+                  <div className="md:hidden absolute top-16 left-0 w-full bg-white shadow-lg border-b border-gray-200 flex flex-col py-3 px-6 gap-2 z-40">
+                    <a href="#menu" onClick={() => setIsMobileMenuOpen(false)} className="font-medium text-slate-600 hover:text-blue-600 py-3 border-b border-gray-50">Menu</a>
+                    <a href="#tentang-se" onClick={() => setIsMobileMenuOpen(false)} className="font-medium text-slate-600 hover:text-blue-600 py-3 border-b border-gray-50">Tentang</a>
+                    <a href="#populasi" onClick={() => setIsMobileMenuOpen(false)} className="font-medium text-slate-600 hover:text-blue-600 py-3">Populasi</a>
                   </div>
                 )}
-              </div>
-              <nav className="flex items-center gap-4 sm:gap-8 font-medium text-slate-600">
-                <a href="#menu" className="hover:text-blue-600 transition-colors py-2">Menu</a>
-                <a href="#tentang-se" className="hover:text-blue-600 transition-colors py-2">Tentang</a>
-                <a href="#populasi" className="hover:text-blue-600 transition-colors py-2">Populasi</a>
-              </nav>
-            </div>
-          </header>
+              </header>
 
-          <main className="flex-1 pb-10">
-            <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
-              <div className="relative w-full h-[250px] sm:h-[350px] rounded-3xl overflow-hidden shadow-xl group bg-slate-900">
-                <img src={data.hero?.imageUrl} alt="Hero" className="w-full h-full object-cover opacity-80 transition-transform duration-1000 group-hover:scale-105" />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent"></div>
-                <div className="absolute bottom-0 left-0 w-full p-6 sm:p-10 text-white">
-                  <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mb-2 drop-shadow-md">{data.hero?.title}</h1>
-                  <p className="text-base sm:text-lg md:text-xl text-gray-200 max-w-3xl drop-shadow">{data.hero?.subtitle}</p>
-                </div>
-              </div>
-            </section>
-
-            <section id="menu" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 overflow-hidden scroll-mt-24">
-              <div className="flex flex-col items-center justify-center">
-                <div className="w-full max-w-5xl mb-10">
-                  <div className="flex items-center justify-between mb-5 px-2">
-                    <h3 className="text-lg font-semibold text-slate-700 flex items-center gap-2">
-                      <ExternalLink className="w-5 h-5 text-orange-500" />
-                      Akses Cepat: <span className="text-blue-600">{data.slides[activeSlide]?.title || 'Menu'}</span>
-                    </h3>
+              <main className="flex-1 pb-10">
+                <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+                  <div className="relative w-full h-[250px] sm:h-[350px] rounded-3xl overflow-hidden shadow-xl group bg-slate-900">
+                    <img src={data.hero?.imageUrl} alt="Hero" className="w-full h-full object-cover opacity-80 transition-transform duration-1000 group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent"></div>
+                    <div className="absolute bottom-0 left-0 w-full p-6 sm:p-10 text-white">
+                      <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mb-2 drop-shadow-md">{data.hero?.title}</h1>
+                      <p className="text-base sm:text-lg md:text-xl text-gray-200 max-w-3xl drop-shadow">{data.hero?.subtitle}</p>
+                    </div>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                    {data.slides[activeSlide]?.links?.map((link) => (
-                      <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer" className="group flex items-center justify-between p-4 sm:p-5 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-orange-200 transition-all duration-300 transform hover:-translate-y-1">
-                        <span className="font-semibold text-slate-700 group-hover:text-blue-700 transition-colors truncate pr-4">{link.label}</span>
-                        <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center group-hover:bg-orange-100 transition-colors shrink-0">
-                          <ChevronRight className="w-4 h-4 text-blue-600 group-hover:text-orange-600" />
-                        </div>
-                      </a>
-                    ))}
-                    {(!data.slides[activeSlide]?.links || data.slides[activeSlide].links.length === 0) && (
-                      <div className="col-span-full text-center py-8 text-gray-400 bg-gray-50 rounded-2xl border border-dashed border-gray-200">Tidak ada tautan untuk kategori ini.</div>
-                    )}
-                  </div>
-                </div>
+                </section>
 
-                <div className="relative w-full max-w-lg sm:max-w-xl h-[200px] sm:h-[260px] flex items-center justify-center perspective-1000 cursor-grab active:cursor-grabbing touch-pan-y"
-                  onTouchStart={handleDragStart} onTouchMove={handleDragMove} onTouchEnd={handleDragEnd}
-                  onMouseDown={handleDragStart} onMouseMove={handleDragMove} onMouseUp={handleDragEnd} onMouseLeave={handleMouseLeave}>
-                  {data.slides.map((slide, index) => (
-                    <div key={slide.id} className={`absolute w-[130px] sm:w-[170px] h-[180px] sm:h-[240px] transition-all duration-700 ease-out bg-transparent ${getSlideStyle(index)}`} onClick={() => setActiveSlide(index)}>
-                      <img draggable={false} src={slide.imageUrl} alt={slide.title} className="w-full h-full object-cover rounded-2xl sm:rounded-3xl select-none pointer-events-none drop-shadow-xl" />
-                      <div className={`absolute bottom-3 w-full px-2 transition-opacity duration-300 flex justify-center ${index === activeSlide ? 'opacity-100' : 'opacity-0'}`}>
-                        <span className="bg-slate-900/70 backdrop-blur-sm text-white text-[10px] sm:text-xs font-semibold px-3 py-1.5 rounded-full shadow-sm text-center truncate w-full border border-white/20">{slide.title}</span>
+                <section id="menu" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 overflow-hidden scroll-mt-24">
+                  <div className="flex flex-col items-center justify-center">
+                    <div className="w-full max-w-5xl mb-10">
+                      <div className="flex items-center justify-between mb-5 px-2">
+                        <h3 className="text-lg font-semibold text-slate-700 flex items-center gap-2">
+                          <ExternalLink className="w-5 h-5 text-orange-500" />
+                          Akses Cepat: <span className="text-blue-600">{data.slides[activeSlide]?.title || 'Menu'}</span>
+                        </h3>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                        {data.slides[activeSlide]?.links?.map((link) => (
+                          <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer" className="group flex items-center justify-between p-4 sm:p-5 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-orange-200 transition-all duration-300 transform hover:-translate-y-1">
+                            <span className="font-semibold text-slate-700 group-hover:text-blue-700 transition-colors truncate pr-4">{link.label}</span>
+                            <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center group-hover:bg-orange-100 transition-colors shrink-0">
+                              <ChevronRight className="w-4 h-4 text-blue-600 group-hover:text-orange-600" />
+                            </div>
+                          </a>
+                        ))}
+                        {(!data.slides[activeSlide]?.links || data.slides[activeSlide].links.length === 0) && (
+                          <div className="col-span-full text-center py-8 text-gray-400 bg-gray-50 rounded-2xl border border-dashed border-gray-200">Tidak ada tautan untuk kategori ini.</div>
+                        )}
                       </div>
                     </div>
-                  ))}
-                  <button onClick={handlePrevSlide} className="absolute left-0 sm:left-4 z-40 p-2 sm:p-2.5 bg-white/90 hover:bg-white text-slate-800 rounded-full shadow-lg backdrop-blur hover:scale-110 transition-all">
-                    <ChevronLeft className="w-5 h-5" />
-                  </button>
-                  <button onClick={handleNextSlide} className="absolute right-0 sm:right-4 z-40 p-2 sm:p-2.5 bg-white/90 hover:bg-white text-slate-800 rounded-full shadow-lg backdrop-blur hover:scale-110 transition-all">
-                    <ChevronRight className="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
-            </section>
 
-            <section id="tentang-se" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-20 scroll-mt-24">
-              <div className="bg-white rounded-3xl p-8 sm:p-12 shadow-sm border border-gray-100 relative overflow-hidden">
-                <div className="absolute -top-10 -right-10 w-40 h-40 bg-orange-100 rounded-full opacity-50 blur-3xl"></div>
-                <div className="relative z-10 flex flex-col md:flex-row gap-8 items-center">
-                  <div className="w-16 h-16 bg-orange-100 text-orange-600 rounded-2xl flex items-center justify-center shrink-0">
-                    <FileText className="w-8 h-8" />
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-bold text-slate-800 mb-3">Tentang Support Equipment</h2>
-                    <p className="text-slate-600 leading-relaxed text-lg">{data.about}</p>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <section id="populasi" className="mt-20 py-20 bg-slate-50 border-y border-gray-200 scroll-mt-20">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="mb-20">
-                  <div className="text-center mb-12"><h2 className="text-xl font-bold text-slate-400 uppercase tracking-widest">Populasi Manpower</h2></div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 justify-items-center">
-                    {data.manpower.map((stat, idx) => (
-                      <div key={stat.id || idx} className="flex flex-col items-center w-full max-w-[250px] group">
-                        <div className="mb-4 text-slate-300 group-hover:text-blue-600 transition-colors duration-300">
-                          <IconMapper name={stat.icon} size={48} className="fill-current stroke-0" />
-                        </div>
-                        <div className="flex items-center gap-4">
-                          <div className="flex flex-col items-center">
-                            <span className="text-slate-800 text-6xl font-light tracking-tighter leading-none group-hover:scale-105 transition-transform duration-300">{stat.count}</span>
-                            <div className="w-16 h-[3px] bg-slate-200 group-hover:bg-blue-600 mt-3 transition-colors duration-300"></div>
+                    <div className="relative w-full max-w-lg sm:max-w-xl h-[200px] sm:h-[260px] flex items-center justify-center perspective-1000 cursor-grab active:cursor-grabbing touch-pan-y"
+                      onTouchStart={handleDragStart} onTouchMove={handleDragMove} onTouchEnd={handleDragEnd}
+                      onMouseDown={handleDragStart} onMouseMove={handleDragMove} onMouseUp={handleDragEnd} onMouseLeave={handleMouseLeave}>
+                      {data.slides.map((slide, index) => (
+                        <div key={slide.id} className={`absolute w-[130px] sm:w-[170px] h-[180px] sm:h-[240px] transition-all duration-700 ease-out bg-transparent ${getSlideStyle(index)}`} onClick={() => setActiveSlide(index)}>
+                          <img draggable={false} src={slide.imageUrl} alt={slide.title} className="w-full h-full object-cover rounded-2xl sm:rounded-3xl select-none pointer-events-none drop-shadow-xl" />
+                          <div className={`absolute bottom-3 w-full px-2 transition-opacity duration-300 flex justify-center ${index === activeSlide ? 'opacity-100' : 'opacity-0'}`}>
+                            <span className="bg-slate-900/70 backdrop-blur-sm text-white text-[10px] sm:text-xs font-semibold px-3 py-1.5 rounded-full shadow-sm text-center truncate w-full border border-white/20">{slide.title}</span>
                           </div>
-                          <span className="text-slate-500 text-sm font-semibold tracking-widest uppercase text-left w-[100px]">{stat.label}</span>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                      <button onClick={handlePrevSlide} className="absolute left-0 sm:left-4 z-40 p-2 sm:p-2.5 bg-white/90 hover:bg-white text-slate-800 rounded-full shadow-lg backdrop-blur hover:scale-110 transition-all">
+                        <ChevronLeft className="w-5 h-5" />
+                      </button>
+                      <button onClick={handleNextSlide} className="absolute right-0 sm:right-4 z-40 p-2 sm:p-2.5 bg-white/90 hover:bg-white text-slate-800 rounded-full shadow-lg backdrop-blur hover:scale-110 transition-all">
+                        <ChevronRight className="w-5 h-5" />
+                      </button>
+                    </div>
                   </div>
-                </div>
+                </section>
 
-                <div>
-                  <div className="text-center mb-12"><h2 className="text-xl font-bold text-slate-400 uppercase tracking-widest">Populasi Unit</h2></div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 justify-items-center">
-                    {data.units.map((stat, idx) => (
-                      <div key={stat.id || idx} className="flex flex-col items-center w-full max-w-[250px] group">
-                        <div className="mb-4 text-slate-300 group-hover:text-orange-500 transition-colors duration-300">
-                          <IconMapper name={stat.icon} size={48} className="fill-current stroke-0" />
+                <section id="tentang-se" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-20 scroll-mt-24">
+                  <div className="bg-white rounded-3xl p-8 sm:p-12 shadow-sm border border-gray-100 relative overflow-hidden">
+                    <div className="absolute -top-10 -right-10 w-40 h-40 bg-orange-100 rounded-full opacity-50 blur-3xl"></div>
+                    
+                    <div className="relative z-10 flex flex-col md:flex-row gap-8 lg:gap-16 items-start md:items-center">
+                      {data.aboutImageUrl ? (
+                        <div className="w-full max-w-[250px] sm:max-w-[350px] shrink-0 mx-auto md:mx-0 bg-transparent">
+                          <img src={data.aboutImageUrl} alt="Tentang Kami" className="w-full h-auto object-contain bg-transparent" />
                         </div>
-                        <div className="flex items-center gap-4">
-                          <div className="flex flex-col items-center">
-                            <span className="text-slate-800 text-6xl font-light tracking-tighter leading-none group-hover:scale-105 transition-transform duration-300">{stat.count}</span>
-                            <div className="w-16 h-[3px] bg-slate-200 group-hover:bg-orange-500 mt-3 transition-colors duration-300"></div>
-                          </div>
-                          <span className="text-slate-500 text-sm font-semibold tracking-widest uppercase text-left w-[100px]">{stat.label}</span>
+                      ) : (
+                        <div className="w-24 h-24 bg-orange-100 text-orange-600 rounded-3xl flex items-center justify-center shrink-0 shadow-sm mx-auto md:mx-0">
+                          <FileText className="w-12 h-12" />
                         </div>
+                      )}
+                      
+                      <div className="flex-1 w-full text-center md:text-left">
+                        <h2 className="text-3xl md:text-4xl font-extrabold text-slate-800 mb-6 tracking-tight">Tentang Support Equipment</h2>
+                        <p className="text-slate-600 leading-relaxed text-lg sm:text-xl text-justify whitespace-pre-wrap">{data.about}</p>
                       </div>
-                    ))}
+                    </div>
                   </div>
-                </div>
-              </div>
-            </section>
-          </main>
+                </section>
 
-          <footer className="border-t-2 border-gray-200 mt-auto bg-white py-6">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-col sm:flex-row justify-between items-center gap-4">
-              <span className="italic text-slate-400/70 text-sm font-medium">created by fadillahm</span>
-              <button onClick={() => { setSettingsDraft(JSON.parse(JSON.stringify(data))); setIsSettingsOpen(true); }} className="p-2.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors flex items-center gap-2" title="Pengaturan Portal">
-                <Settings className="w-5 h-5" /><span className="text-sm font-medium sm:hidden">Pengaturan</span>
-              </button>
-            </div>
-          </footer>
-
-          {isSettingsOpen && (
-            <div className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-              <div className="bg-white rounded-3xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col">
-                <div className="p-5 sm:p-6 border-b border-gray-100 flex justify-between items-center bg-slate-50">
-                  <h2 className="text-xl sm:text-2xl font-bold text-slate-800 flex items-center gap-2">
-                    <Settings className="text-blue-600 w-6 h-6" /> Pengaturan Portal
-                  </h2>
-                  <button onClick={() => setIsSettingsOpen(false)} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors">
-                    <X className="w-6 h-6" />
-                  </button>
-                </div>
-
-                <div className="flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col md:flex-row gap-6">
-                  <div className="w-full md:w-64 space-y-2 shrink-0">
-                    {[{ id: 'general', label: 'Umum & Teks' }, { id: 'slides', label: 'Slider & Akses Cepat' }, { id: 'manpower', label: 'Data Manpower' }, { id: 'units', label: 'Data Unit' }].map(tab => (
-                      <button key={tab.id} onClick={() => setActiveSettingsTab(tab.id)} className={`w-full text-left px-4 py-3 rounded-xl font-medium transition-colors ${activeSettingsTab === tab.id ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-50 text-gray-600 hover:bg-gray-100'}`}>{tab.label}</button>
-                    ))}
-                  </div>
-
-                  <div className="flex-1 space-y-6">
-                    {activeSettingsTab === 'general' && (
-                      <div className="space-y-5">
-                        <div><label className="block text-sm font-medium text-gray-700 mb-1">URL Logo Perusahaan</label><input type="text" value={settingsDraft.hero?.logoUrl || ''} onChange={e => setSettingsDraft({ ...settingsDraft, hero: { ...settingsDraft.hero, logoUrl: e.target.value } })} className="w-full p-3 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 text-sm" /></div>
-                        <div><label className="block text-sm font-medium text-gray-700 mb-1">Judul Hero</label><input type="text" value={settingsDraft.hero?.title || ''} onChange={e => setSettingsDraft({ ...settingsDraft, hero: { ...settingsDraft.hero, title: e.target.value } })} className="w-full p-3 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500" /></div>
-                        <div><label className="block text-sm font-medium text-gray-700 mb-1">Sub-Judul Hero</label><input type="text" value={settingsDraft.hero?.subtitle || ''} onChange={e => setSettingsDraft({ ...settingsDraft, hero: { ...settingsDraft.hero, subtitle: e.target.value } })} className="w-full p-3 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500" /></div>
-                        <div><label className="block text-sm font-medium text-gray-700 mb-1">URL Foto Hero</label><input type="text" value={settingsDraft.hero?.imageUrl || ''} onChange={e => setSettingsDraft({ ...settingsDraft, hero: { ...settingsDraft.hero, imageUrl: e.target.value } })} className="w-full p-3 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 text-sm" /></div>
-                        <div><label className="block text-sm font-medium text-gray-700 mb-1">Teks Tentang Kami</label><textarea value={settingsDraft.about || ''} rows={4} onChange={e => setSettingsDraft({ ...settingsDraft, about: e.target.value })} className="w-full p-3 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500"></textarea></div>
+                <section id="populasi" className="mt-20 py-20 bg-white border-y border-gray-200 scroll-mt-20">
+                  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    
+                    <div className="mb-20">
+                      <div className="text-center mb-12">
+                        <h2 className="text-xl font-bold text-slate-400 uppercase tracking-widest">Populasi Manpower</h2>
                       </div>
-                    )}
-
-                    {activeSettingsTab === 'slides' && (
-                      <div className="space-y-8">
-                        {settingsDraft.slides.map((slide, sIdx) => (
-                          <div key={slide.id || sIdx} className="p-5 border border-gray-200 rounded-2xl bg-white shadow-sm space-y-4">
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                              <div><label className="block text-xs font-semibold text-gray-500 uppercase mb-1">Judul Kategori</label><input type="text" value={slide.title} onChange={e => { const newSlides = [...settingsDraft.slides]; newSlides[sIdx].title = e.target.value; setSettingsDraft({ ...settingsDraft, slides: newSlides }); }} className="w-full p-2.5 border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500" /></div>
-                              <div><label className="block text-xs font-semibold text-gray-500 uppercase mb-1">URL Foto Slider</label><input type="text" value={slide.imageUrl} onChange={e => { const newSlides = [...settingsDraft.slides]; newSlides[sIdx].imageUrl = e.target.value; setSettingsDraft({ ...settingsDraft, slides: newSlides }); }} className="w-full p-2.5 border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 text-sm" /></div>
+                      
+                      {/* Grid 3 Kolom di Mobile, 4 di Desktop */}
+                      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 gap-y-12 gap-x-2 sm:gap-8 justify-items-center">
+                        {data.manpower.map((stat, idx) => (
+                          <div key={stat.id || idx} className="flex flex-col items-center group w-full text-center">
+                            <div className="mb-2 sm:mb-4 text-slate-300 group-hover:text-blue-600 transition-colors duration-300 flex items-center justify-center h-10 sm:h-12">
+                              <IconMapper name={stat.icon} size={36} className="w-8 h-8 sm:w-12 sm:h-12 fill-current stroke-0" />
                             </div>
-                            <div className="pt-2 border-t border-gray-100">
-                              <label className="block text-xs font-semibold text-gray-500 uppercase mb-3">Tautan Akses Cepat</label>
-                              <div className="space-y-2">
-                                {slide.links?.map((link, lIdx) => (
-                                  <div key={link.id || lIdx} className="flex flex-col sm:flex-row gap-2 bg-gray-50 p-2 rounded-lg border border-gray-100">
-                                    <input type="text" placeholder="Nama Tombol" value={link.label} onChange={e => { const newSlides = [...settingsDraft.slides]; newSlides[sIdx].links[lIdx].label = e.target.value; setSettingsDraft({ ...settingsDraft, slides: newSlides }); }} className="flex-1 w-full p-2 border border-gray-200 rounded-md text-sm" />
-                                    <input type="text" placeholder="URL Target" value={link.url} onChange={e => { const newSlides = [...settingsDraft.slides]; newSlides[sIdx].links[lIdx].url = e.target.value; setSettingsDraft({ ...settingsDraft, slides: newSlides }); }} className="flex-1 w-full p-2 border border-gray-200 rounded-md text-sm" />
-                                    <button onClick={() => { const newSlides = [...settingsDraft.slides]; newSlides[sIdx].links.splice(lIdx, 1); setSettingsDraft({ ...settingsDraft, slides: newSlides }); }} className="p-2 text-red-500 hover:bg-red-100 rounded-md self-end sm:self-auto"><Trash2 className="w-4 h-4" /></button>
+                            <div className="flex flex-col items-center">
+                              <span className="text-slate-800 text-4xl sm:text-6xl font-light tracking-tighter leading-none group-hover:scale-105 transition-transform duration-300">{stat.count}</span>
+                              <div className="w-10 sm:w-16 h-[2px] sm:h-[3px] bg-slate-200 group-hover:bg-blue-600 mt-2 sm:mt-3 mb-2 transition-colors duration-300"></div>
+                            </div>
+                            <span className="text-slate-500 text-[9px] sm:text-sm font-semibold tracking-widest uppercase leading-tight w-full px-1">{stat.label}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="text-center mb-12">
+                        <h2 className="text-xl font-bold text-slate-400 uppercase tracking-widest">Populasi Unit</h2>
+                      </div>
+
+                      {/* Grid 3 Kolom di Mobile, 3 di Desktop */}
+                      <div className="grid grid-cols-3 md:grid-cols-3 gap-y-12 gap-x-2 sm:gap-8 justify-items-center">
+                        {data.units.map((stat, idx) => (
+                          <div key={stat.id || idx} className="flex flex-col items-center group w-full text-center">
+                            <div className="mb-2 sm:mb-4 text-slate-300 group-hover:text-orange-500 transition-colors duration-300 flex items-center justify-center h-10 sm:h-12">
+                              <IconMapper name={stat.icon} size={36} className="w-8 h-8 sm:w-12 sm:h-12 fill-current stroke-0" />
+                            </div>
+                            <div className="flex flex-col items-center">
+                              <span className="text-slate-800 text-4xl sm:text-6xl font-light tracking-tighter leading-none group-hover:scale-105 transition-transform duration-300">{stat.count}</span>
+                              <div className="w-10 sm:w-16 h-[2px] sm:h-[3px] bg-slate-200 group-hover:bg-orange-500 mt-2 sm:mt-3 mb-2 transition-colors duration-300"></div>
+                            </div>
+                            <span className="text-slate-500 text-[9px] sm:text-sm font-semibold tracking-widest uppercase leading-tight w-full px-1">{stat.label}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                  </div>
+                </section>
+              </main>
+
+              {}
+              <footer className="border-t-2 border-gray-200 mt-auto bg-white py-6">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-col sm:flex-row justify-between items-center gap-4">
+                  <span className="italic text-slate-400/70 text-sm font-medium">created by fadillahm</span>
+                  <button onClick={() => { setSettingsDraft(JSON.parse(JSON.stringify(data))); setIsSettingsOpen(true); }} className="p-2.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors flex items-center gap-2" title="Pengaturan Portal">
+                    <Settings className="w-5 h-5" /><span className="text-sm font-medium sm:hidden">Pengaturan</span>
+                  </button>
+                </div>
+              </footer>
+
+              {isSettingsOpen && (
+                <div className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+                  <div className="bg-white rounded-3xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col">
+                    <div className="p-5 sm:p-6 border-b border-gray-100 flex justify-between items-center bg-slate-50">
+                      <h2 className="text-xl sm:text-2xl font-bold text-slate-800 flex items-center gap-2">
+                        <Settings className="text-blue-600 w-6 h-6" /> Pengaturan Portal
+                      </h2>
+                      <button onClick={() => setIsSettingsOpen(false)} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors">
+                        <X className="w-6 h-6" />
+                      </button>
+                    </div>
+                    
+                    <div className="flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col md:flex-row gap-6">
+                      <div className="w-full md:w-64 space-y-2 shrink-0">
+                        {[{ id: 'general', label: 'Umum & Teks' }, { id: 'slides', label: 'Slider & Akses Cepat' }, { id: 'manpower', label: 'Data Manpower' }, { id: 'units', label: 'Data Unit' }].map(tab => (
+                          <button key={tab.id} onClick={() => setActiveSettingsTab(tab.id)} className={`w-full text-left px-4 py-3 rounded-xl font-medium transition-colors ${activeSettingsTab === tab.id ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-50 text-gray-600 hover:bg-gray-100'}`}>{tab.label}</button>
+                        ))}
+                      </div>
+
+                      <div className="flex-1 space-y-6">
+                        {activeSettingsTab === 'general' && (
+                          <div className="space-y-5">
+                            <div><label className="block text-sm font-medium text-gray-700 mb-1">URL Logo Perusahaan</label><input type="text" value={settingsDraft.hero?.logoUrl || ''} onChange={e => setSettingsDraft({...settingsDraft, hero: {...settingsDraft.hero, logoUrl: e.target.value}})} className="w-full p-3 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 text-sm" /></div>
+                            <div><label className="block text-sm font-medium text-gray-700 mb-1">Judul Hero</label><input type="text" value={settingsDraft.hero?.title || ''} onChange={e => setSettingsDraft({...settingsDraft, hero: {...settingsDraft.hero, title: e.target.value}})} className="w-full p-3 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500" /></div>
+                            <div><label className="block text-sm font-medium text-gray-700 mb-1">Sub-Judul Hero</label><input type="text" value={settingsDraft.hero?.subtitle || ''} onChange={e => setSettingsDraft({...settingsDraft, hero: {...settingsDraft.hero, subtitle: e.target.value}})} className="w-full p-3 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500" /></div>
+                            <div><label className="block text-sm font-medium text-gray-700 mb-1">URL Foto Hero</label><input type="text" value={settingsDraft.hero?.imageUrl || ''} onChange={e => setSettingsDraft({...settingsDraft, hero: {...settingsDraft.hero, imageUrl: e.target.value}})} className="w-full p-3 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 text-sm" /></div>
+                            <div><label className="block text-sm font-medium text-gray-700 mb-1">URL Foto Tentang Kami (Opsional)</label><input type="text" placeholder="Kosongkan untuk pakai ikon dokumen" value={settingsDraft.aboutImageUrl || ''} onChange={e => setSettingsDraft({...settingsDraft, aboutImageUrl: e.target.value})} className="w-full p-3 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 text-sm" /></div>
+                            <div><label className="block text-sm font-medium text-gray-700 mb-1">Teks Tentang Kami</label><textarea value={settingsDraft.about || ''} rows={5} onChange={e => setSettingsDraft({...settingsDraft, about: e.target.value})} className="w-full p-3 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 text-justify"></textarea></div>
+                          </div>
+                        )}
+
+                        {activeSettingsTab === 'slides' && (
+                          <div className="space-y-8">
+                            {settingsDraft.slides.map((slide, sIdx) => (
+                              <div key={slide.id || sIdx} className="p-5 border border-gray-200 rounded-2xl bg-white shadow-sm space-y-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                  <div><label className="block text-xs font-semibold text-gray-500 uppercase mb-1">Judul Kategori</label><input type="text" value={slide.title} onChange={e => { const newSlides = [...settingsDraft.slides]; newSlides[sIdx].title = e.target.value; setSettingsDraft({...settingsDraft, slides: newSlides}); }} className="w-full p-2.5 border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500" /></div>
+                                  <div><label className="block text-xs font-semibold text-gray-500 uppercase mb-1">URL Foto Slider</label><input type="text" value={slide.imageUrl} onChange={e => { const newSlides = [...settingsDraft.slides]; newSlides[sIdx].imageUrl = e.target.value; setSettingsDraft({...settingsDraft, slides: newSlides}); }} className="w-full p-2.5 border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 text-sm" /></div>
+                                </div>
+                                <div className="pt-2 border-t border-gray-100">
+                                  <label className="block text-xs font-semibold text-gray-500 uppercase mb-3">Tautan Akses Cepat</label>
+                                  <div className="space-y-2">
+                                    {slide.links?.map((link, lIdx) => (
+                                      <div key={link.id || lIdx} className="flex flex-col sm:flex-row gap-2 bg-gray-50 p-2 rounded-lg border border-gray-100">
+                                        <input type="text" placeholder="Nama Tombol" value={link.label} onChange={e => { const newSlides = [...settingsDraft.slides]; newSlides[sIdx].links[lIdx].label = e.target.value; setSettingsDraft({...settingsDraft, slides: newSlides}); }} className="flex-1 w-full p-2 border border-gray-200 rounded-md text-sm" />
+                                        <input type="text" placeholder="URL Target" value={link.url} onChange={e => { const newSlides = [...settingsDraft.slides]; newSlides[sIdx].links[lIdx].url = e.target.value; setSettingsDraft({...settingsDraft, slides: newSlides}); }} className="flex-1 w-full p-2 border border-gray-200 rounded-md text-sm" />
+                                        <button onClick={() => { const newSlides = [...settingsDraft.slides]; newSlides[sIdx].links.splice(lIdx, 1); setSettingsDraft({...settingsDraft, slides: newSlides}); }} className="p-2 text-red-500 hover:bg-red-100 rounded-md self-end sm:self-auto"><Trash2 className="w-4 h-4" /></button>
+                                      </div>
+                                    ))}
+                                    <button onClick={() => { const newSlides = [...settingsDraft.slides]; if (!newSlides[sIdx].links) newSlides[sIdx].links = []; newSlides[sIdx].links.push({ id: Date.now().toString(), label: "Link Baru", url: "" }); setSettingsDraft({...settingsDraft, slides: newSlides}); }} className="flex items-center gap-1 text-sm text-blue-600 hover:bg-blue-50 py-2 px-2 rounded-lg font-medium"><Plus className="w-4 h-4" /> Tambah Tautan</button>
                                   </div>
-                                ))}
-                                <button onClick={() => { const newSlides = [...settingsDraft.slides]; if (!newSlides[sIdx].links) newSlides[sIdx].links = []; newSlides[sIdx].links.push({ id: Date.now().toString(), label: "Link Baru", url: "" }); setSettingsDraft({ ...settingsDraft, slides: newSlides }); }} className="flex items-center gap-1 text-sm text-blue-600 hover:bg-blue-50 py-2 px-2 rounded-lg font-medium"><Plus className="w-4 h-4" /> Tambah Tautan</button>
+                                </div>
                               </div>
-                            </div>
+                            ))}
                           </div>
-                        ))}
-                      </div>
-                    )}
+                        )}
 
-                    {activeSettingsTab === 'manpower' && (
-                      <div className="space-y-4">
-                        {settingsDraft.manpower.map((item, idx) => (
-                          <div key={item.id || idx} className="flex gap-3 items-center bg-gray-50 p-3 rounded-xl border border-gray-100">
-                            <div className="p-2 bg-white rounded-lg border border-gray-200 text-gray-400"><IconMapper name={item.icon} size={20} /></div>
-                            <input type="text" value={item.label} onChange={e => { const newMp = [...settingsDraft.manpower]; newMp[idx].label = e.target.value; setSettingsDraft({ ...settingsDraft, manpower: newMp }); }} className="flex-1 p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500" />
-                            <input type="number" value={item.count} onChange={e => { const newMp = [...settingsDraft.manpower]; newMp[idx].count = parseInt(e.target.value) || 0; setSettingsDraft({ ...settingsDraft, manpower: newMp }); }} className="w-24 p-2 border border-gray-200 rounded-lg text-center font-bold focus:ring-2 focus:ring-blue-500" />
-                            <button onClick={() => { const newMp = [...settingsDraft.manpower]; newMp.splice(idx, 1); setSettingsDraft({ ...settingsDraft, manpower: newMp }); }} className="p-2 text-red-500 hover:bg-red-100 rounded-lg"><Trash2 className="w-5 h-5" /></button>
+                        {activeSettingsTab === 'manpower' && (
+                          <div className="space-y-4">
+                            {settingsDraft.manpower.map((item, idx) => (
+                              <div key={item.id || idx} className="flex gap-3 items-center bg-gray-50 p-3 rounded-xl border border-gray-100">
+                                <div className="p-2 bg-white rounded-lg border border-gray-200 text-gray-400"><IconMapper name={item.icon} size={20} /></div>
+                                <input type="text" value={item.label} onChange={e => { const newMp = [...settingsDraft.manpower]; newMp[idx].label = e.target.value; setSettingsDraft({...settingsDraft, manpower: newMp}); }} className="flex-1 p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500" />
+                                <input type="number" value={item.count} onChange={e => { const newMp = [...settingsDraft.manpower]; newMp[idx].count = parseInt(e.target.value) || 0; setSettingsDraft({...settingsDraft, manpower: newMp}); }} className="w-24 p-2 border border-gray-200 rounded-lg text-center font-bold focus:ring-2 focus:ring-blue-500" />
+                                <button onClick={() => { const newMp = [...settingsDraft.manpower]; newMp.splice(idx, 1); setSettingsDraft({...settingsDraft, manpower: newMp}); }} className="p-2 text-red-500 hover:bg-red-100 rounded-lg"><Trash2 className="w-5 h-5" /></button>
+                              </div>
+                            ))}
+                            <button onClick={() => setSettingsDraft({ ...settingsDraft, manpower: [...settingsDraft.manpower, { id: Date.now().toString(), label: "Baru", count: 0, icon: "User" }]})} className="w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 hover:text-blue-600 hover:bg-blue-50"><Plus className="w-5 h-5" /> Tambah Data</button>
                           </div>
-                        ))}
-                        <button onClick={() => setSettingsDraft({ ...settingsDraft, manpower: [...settingsDraft.manpower, { id: Date.now().toString(), label: "Baru", count: 0, icon: "User" }] })} className="w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 hover:text-blue-600 hover:bg-blue-50"><Plus className="w-5 h-5" /> Tambah Data</button>
-                      </div>
-                    )}
+                        )}
 
-                    {activeSettingsTab === 'units' && (
-                      <div className="space-y-4">
-                        {settingsDraft.units.map((item, idx) => (
-                          <div key={item.id || idx} className="flex gap-3 items-center bg-gray-50 p-3 rounded-xl border border-gray-100">
-                            <div className="p-2 bg-white rounded-lg border border-gray-200 text-gray-400"><IconMapper name={item.icon} size={20} /></div>
-                            <input type="text" value={item.label} onChange={e => { const newUnits = [...settingsDraft.units]; newUnits[idx].label = e.target.value; setSettingsDraft({ ...settingsDraft, units: newUnits }); }} className="flex-1 p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500" />
-                            <input type="number" value={item.count} onChange={e => { const newUnits = [...settingsDraft.units]; newUnits[idx].count = parseInt(e.target.value) || 0; setSettingsDraft({ ...settingsDraft, units: newUnits }); }} className="w-24 p-2 border border-gray-200 rounded-lg text-center font-bold focus:ring-2 focus:ring-blue-500" />
-                            <button onClick={() => { const newUnits = [...settingsDraft.units]; newUnits.splice(idx, 1); setSettingsDraft({ ...settingsDraft, units: newUnits }); }} className="p-2 text-red-500 hover:bg-red-100 rounded-lg"><Trash2 className="w-5 h-5" /></button>
+                        {activeSettingsTab === 'units' && (
+                          <div className="space-y-4">
+                            {settingsDraft.units.map((item, idx) => (
+                              <div key={item.id || idx} className="flex gap-3 items-center bg-gray-50 p-3 rounded-xl border border-gray-100">
+                                <div className="p-2 bg-white rounded-lg border border-gray-200 text-gray-400"><IconMapper name={item.icon} size={20} /></div>
+                                <input type="text" value={item.label} onChange={e => { const newUnits = [...settingsDraft.units]; newUnits[idx].label = e.target.value; setSettingsDraft({...settingsDraft, units: newUnits}); }} className="flex-1 p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500" />
+                                <input type="number" value={item.count} onChange={e => { const newUnits = [...settingsDraft.units]; newUnits[idx].count = parseInt(e.target.value) || 0; setSettingsDraft({...settingsDraft, units: newUnits}); }} className="w-24 p-2 border border-gray-200 rounded-lg text-center font-bold focus:ring-2 focus:ring-blue-500" />
+                                <button onClick={() => { const newUnits = [...settingsDraft.units]; newUnits.splice(idx, 1); setSettingsDraft({...settingsDraft, units: newUnits}); }} className="p-2 text-red-500 hover:bg-red-100 rounded-lg"><Trash2 className="w-5 h-5" /></button>
+                              </div>
+                            ))}
+                            <button onClick={() => setSettingsDraft({ ...settingsDraft, units: [...settingsDraft.units, { id: Date.now().toString(), label: "Baru", count: 0, icon: "Truck" }]})} className="w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 hover:text-orange-600 hover:bg-orange-50"><Plus className="w-5 h-5" /> Tambah Data</button>
                           </div>
-                        ))}
-                        <button onClick={() => setSettingsDraft({ ...settingsDraft, units: [...settingsDraft.units, { id: Date.now().toString(), label: "Baru", count: 0, icon: "Truck" }] })} className="w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 hover:text-orange-600 hover:bg-orange-50"><Plus className="w-5 h-5" /> Tambah Data</button>
+                        )}
                       </div>
-                    )}
+                    </div>
+
+                    <div className="p-4 sm:p-6 border-t border-gray-100 bg-gray-50 flex justify-end gap-3 rounded-b-3xl">
+                      <button onClick={() => setIsSettingsOpen(false)} className="px-5 py-2.5 rounded-xl font-medium text-gray-600 hover:bg-gray-200">Batal</button>
+                      <button onClick={handleSaveSettings} className="px-5 py-2.5 rounded-xl font-medium text-white bg-blue-600 hover:bg-blue-700 flex items-center gap-2 shadow-lg shadow-blue-500/30">
+                        <Save className="w-5 h-5" /> Simpan Perubahan
+                      </button>
+                    </div>
                   </div>
                 </div>
-
-                <div className="p-4 sm:p-6 border-t border-gray-100 bg-gray-50 flex justify-end gap-3 rounded-b-3xl">
-                  <button onClick={() => setIsSettingsOpen(false)} className="px-5 py-2.5 rounded-xl font-medium text-gray-600 hover:bg-gray-200">Batal</button>
-                  <button onClick={handleSaveSettings} className="px-5 py-2.5 rounded-xl font-medium text-white bg-blue-600 hover:bg-blue-700 flex items-center gap-2 shadow-lg shadow-blue-500/30">
-                    <Save className="w-5 h-5" /> Simpan Perubahan
-                  </button>
-                </div>
-              </div>
+              )}
             </div>
-          )}
-        </div>
-      );
-    }
+          );
+        }
 
-    const root = createRoot(document.getElementById('root'));
-    root.render(<App />);
-  </script>
+        const root = createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
 </body>
-
 </html>
