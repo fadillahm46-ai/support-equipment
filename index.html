@@ -19,7 +19,7 @@
     </script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
-<body class="bg-gray-100 text-gray-800 font-sans antialiased overflow-x-hidden">
+<body class="bg-gray-50 text-gray-800 font-sans antialiased overflow-x-hidden">
     <div id="root"></div>
 
     <script type="text/babel" data-type="module">
@@ -33,35 +33,33 @@
         } from 'lucide-react';
 
         const APPSCRIPT_URL = "https://script.google.com/macros/s/AKfycbxkJl7PeW5VQVX4errbzpm8psAMp5RxzAPnzqCA0Smj_r3mDgRylWC-1So5ZJl2jr6d5g/exec"; 
-        const CACHE_KEY = "portal_se_data_v3";
+        const CACHE_KEY = "portal_se_data_v4";
 
         const defaultData = {
           settingsPassword: "123456Fa",
           hero: {
             title: "Portal Support Equipment",
             subtitle: "Pusat Informasi Operasional, Pemeliharaan, dan Manajemen Divisi",
-            imageUrl: "", 
+            imageUrl: "https://lh3.googleusercontent.com/d/1x2INLTU76tuRcg_e4l3TLHeKBrXg4z6N", 
             logoUrl: ""
           },
           about: "Section Support Equipment bertindak sebagai tulang punggung operasional yang menjamin kelancaran, efisiensi, dan keselamatan kerja seluruh tim di lapangan. Kami bertanggung jawab memfasilitasi kebutuhan teknis lapangan secara menyeluruh, mulai dari perawatan rutin armada seperti pengisian pelumas, greasing, dan pembersihan unit, hingga penanganan serta pengangkutan material berat secara aman dan terintegrasi.",
           aboutImageUrl: "",
           slides: [
-            { id: "s1", title: "Pemeliharaan (Maintenance)", imageUrl: "", links: [] },
-            { id: "s2", title: "Operasional Unit", imageUrl: "", links: [] },
-            { id: "s3", title: "Manajemen K3 (HSE)", imageUrl: "", links: [] }
+            { id: "s1", title: "LUKMANUL HAKIM", imageUrl: "", links: [] },
+            { id: "s2", title: "FADILLAH", imageUrl: "", links: [] },
+            { id: "s3", title: "OPERASIONAL", imageUrl: "", links: [] }
           ],
           manpower: [
-            { id: "m1", label: "Staf", count: 0, icon: "User" },
-            { id: "m2", label: "Admin", count: 0, icon: "ClipboardEdit" },
-            { id: "m3", label: "Driver LV", count: 0, icon: "Car" },
-            { id: "m4", label: "Operator WT", count: 0, icon: "Droplet" },
-            { id: "m5", label: "Operator Exca", count: 0, icon: "HardHat" },
-            { id: "m6", label: "Rigger", count: 0, icon: "Anchor" }
+            { id: "m1", label: "Staf", count: 12, icon: "User" },
+            { id: "m2", label: "Admin", count: 8, icon: "ClipboardEdit" },
+            { id: "m3", label: "Driver LV", count: 35, icon: "Car" },
+            { id: "m4", label: "Operator WT", count: 20, icon: "Droplet" }
           ],
           units: [
-            { id: "u1", label: "Light Truck (LT)", count: 0, icon: "Truck" },
-            { id: "u2", label: "Water Truck (WT)", count: 0, icon: "Droplet" },
-            { id: "u3", label: "Crane Truck (CT)", count: 0, icon: "Anchor" }
+            { id: "u1", label: "Light Truck (LT)", count: 24, icon: "Truck" },
+            { id: "u2", label: "Water Truck (WT)", count: 12, icon: "Droplet" },
+            { id: "u3", label: "Crane Truck (CT)", count: 6, icon: "Anchor" }
           ]
         };
 
@@ -72,8 +70,11 @@
         };
 
         function App() {
-          const [data, setData] = useState(defaultData);
-          const [loading, setLoading] = useState(false);
+          const [data, setData] = useState(() => {
+            const cached = localStorage.getItem(CACHE_KEY);
+            return cached ? JSON.parse(cached) : defaultData;
+          });
+          const [loading, setLoading] = useState(!localStorage.getItem(CACHE_KEY));
           
           const [activeSlide, setActiveSlide] = useState(0);
           const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -92,13 +93,7 @@
           const minSwipeDistance = 50;
 
           useEffect(() => {
-            const loadData = async () => {
-              const cachedData = localStorage.getItem(CACHE_KEY);
-              if (cachedData) {
-                setData(JSON.parse(cachedData));
-              }
-
-              setLoading(true);
+            const fetchLatestData = async () => {
               try {
                 const response = await fetch(APPSCRIPT_URL); 
                 const sheetData = await response.json();
@@ -112,7 +107,7 @@
                 setLoading(false);
               }
             };
-            loadData();
+            fetchLatestData();
           }, []);
 
           useEffect(() => {
@@ -152,15 +147,32 @@
           };
 
           const getSlideStyle = (index) => {
-            if (!data.slides) return "";
+            if (!data.slides || data.slides.length === 0) return "hidden";
             const length = data.slides.length;
+            
             let offset = (index - activeSlide + length) % length;
+            // Koreksi offset agar berada di tengah (contoh untuk 5 item: -2, -1, 0, 1, 2)
             if (offset > Math.floor(length / 2)) offset -= length;
 
-            if (offset === 0) return "translate-x-0 scale-100 opacity-100 z-30 drop-shadow-xl";
-            if (offset === 1 || (offset < 0 && index === activeSlide + 1)) return "translate-x-[90%] sm:translate-x-[110%] scale-[0.8] opacity-50 z-20 cursor-pointer hover:opacity-75 blur-[1px]";
-            if (offset === -1 || (offset > 0 && index === activeSlide - 1)) return "-translate-x-[90%] sm:-translate-x-[110%] scale-[0.8] opacity-50 z-20 cursor-pointer hover:opacity-75 blur-[1px]";
-            return "translate-x-0 scale-50 opacity-0 z-0 pointer-events-none";
+            // Foto Tengah
+            if (offset === 0) {
+              return "translate-x-0 scale-100 opacity-100 z-50 drop-shadow-[0_15px_15px_rgba(0,0,0,0.4)]";
+            } 
+            // Foto Sebelah Kanan & Kiri Langsung
+            else if (offset === 1) {
+              return "translate-x-[75%] sm:translate-x-[105%] scale-[0.85] opacity-75 z-40 cursor-pointer hover:opacity-100 blur-[1px]";
+            } else if (offset === -1) {
+              return "-translate-x-[75%] sm:-translate-x-[105%] scale-[0.85] opacity-75 z-40 cursor-pointer hover:opacity-100 blur-[1px]";
+            } 
+            // Foto Paling Ujung Kanan & Kiri
+            else if (offset === 2) {
+              return "translate-x-[140%] sm:translate-x-[200%] scale-[0.65] opacity-40 z-30 cursor-pointer hover:opacity-60 blur-[2px]";
+            } else if (offset === -2) {
+              return "-translate-x-[140%] sm:-translate-x-[200%] scale-[0.65] opacity-40 z-30 cursor-pointer hover:opacity-60 blur-[2px]";
+            }
+            
+            // Sisa foto disembunyikan
+            return "translate-x-0 scale-50 opacity-0 z-0 pointer-events-none hidden";
           };
 
           const handleOpenSettings = () => {
@@ -210,7 +222,7 @@
           return (
             <div className="min-h-screen font-sans text-slate-800 flex flex-col bg-gray-50">
               
-              <header className="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-100">
+              <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-sm border-b border-gray-100">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                   <div className="flex items-center cursor-pointer" onClick={() => window.scrollTo(0,0)}>
                     {data.hero?.logoUrl ? (
@@ -233,20 +245,19 @@
                   </nav>
 
                   <div className="md:hidden flex items-center">
-                    <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg border border-gray-200">
-                      {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                    <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 text-slate-700 hover:bg-gray-100 rounded-lg border border-gray-200 focus:outline-none">
+                      {isMobileMenuOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
                     </button>
                   </div>
                 </div>
 
-                {}
                 {isMobileMenuOpen && (
-                  <div className="md:hidden absolute top-16 left-0 w-full bg-white border-b border-gray-200 shadow-lg px-4 py-4 flex flex-col gap-2 z-50">
-                    <a href="#menu" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 text-slate-700 font-medium hover:bg-gray-50 rounded-xl">Menu Akses</a>
-                    <a href="#tentang-se" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 text-slate-700 font-medium hover:bg-gray-50 rounded-xl">Tentang Support Equipment</a>
-                    <a href="#populasi" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 text-slate-700 font-medium hover:bg-gray-50 rounded-xl">Populasi Data</a>
+                  <div className="md:hidden absolute top-16 left-0 w-full bg-white border-b border-gray-200 shadow-xl px-4 py-4 flex flex-col gap-2 z-50 rounded-b-2xl">
+                    <a href="#menu" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 text-slate-700 font-bold hover:bg-gray-50 rounded-xl">Menu Akses</a>
+                    <a href="#tentang-se" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 text-slate-700 font-bold hover:bg-gray-50 rounded-xl">Tentang Support Equipment</a>
+                    <a href="#populasi" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 text-slate-700 font-bold hover:bg-gray-50 rounded-xl">Populasi Data</a>
                     <div className="h-px bg-gray-100 my-2"></div>
-                    <button onClick={handleOpenSettings} className="px-4 py-3 text-left text-blue-600 font-medium hover:bg-blue-50 rounded-xl flex items-center gap-3">
+                    <button onClick={handleOpenSettings} className="px-4 py-3 text-left text-blue-600 font-bold hover:bg-blue-50 rounded-xl flex items-center gap-3">
                       <Settings className="w-5 h-5" /> Pengaturan Portal
                     </button>
                   </div>
@@ -254,25 +265,23 @@
               </header>
 
               <main className="flex-1 pb-10">
-                {}
-                <section className="w-full relative h-[300px] sm:h-[450px] bg-slate-900 overflow-hidden">
+                <section className="w-full relative h-[300px] sm:h-[400px] md:h-[500px] bg-slate-900 overflow-hidden">
                   {data.hero?.imageUrl && (
                     <img src={data.hero.imageUrl} alt="Hero" className="w-full h-full object-cover opacity-80" />
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/95 via-slate-900/40 to-transparent"></div>
                   <div className="absolute bottom-0 w-full">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 sm:pb-12 text-white">
-                      <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-3 drop-shadow-lg">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10 sm:pb-16 text-white">
+                      <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-4 drop-shadow-xl">
                         {data.hero?.title}
                       </h1>
-                      <p className="text-sm sm:text-lg md:text-xl text-gray-200 max-w-3xl drop-shadow font-medium">
+                      <p className="text-base sm:text-xl md:text-2xl text-gray-200 max-w-3xl drop-shadow-md font-medium leading-relaxed">
                         {data.hero?.subtitle}
                       </p>
                     </div>
                   </div>
                 </section>
 
-                {}
                 <section id="menu" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16 overflow-hidden scroll-mt-24">
                   <div className="flex flex-col items-center justify-center">
                     
@@ -300,36 +309,33 @@
                       </div>
                     </div>
 
-                    <div className="relative w-full max-w-lg sm:max-w-xl h-[200px] sm:h-[260px] flex items-center justify-center perspective-1000 cursor-grab active:cursor-grabbing touch-pan-y"
+                    <div className="relative w-full max-w-full md:max-w-5xl h-[220px] sm:h-[300px] flex items-center justify-center perspective-1000 cursor-grab active:cursor-grabbing touch-pan-y mt-4"
                       onTouchStart={handleDragStart} onTouchMove={handleDragMove} onTouchEnd={handleDragEnd}
                       onMouseDown={handleDragStart} onMouseMove={handleDragMove} onMouseUp={handleDragEnd} onMouseLeave={handleMouseLeave}>
                       
                       {data.slides && data.slides.map((slide, index) => (
-                        <div key={slide.id} className={`absolute w-[130px] sm:w-[170px] h-[180px] sm:h-[240px] transition-all duration-700 ease-out bg-transparent ${getSlideStyle(index)}`} onClick={() => setActiveSlide(index)}>
-                          {slide.imageUrl ? (
-                            <img draggable={false} src={slide.imageUrl} alt={slide.title} className="w-full h-full object-contain drop-shadow-[0_15px_15px_rgba(0,0,0,0.3)] select-none pointer-events-none" />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center pointer-events-none"></div>
+                        <div key={slide.id} className={`absolute w-[130px] sm:w-[170px] h-[180px] sm:h-[240px] transition-all duration-700 ease-out bg-transparent ${getSlideStyle(index)} flex flex-col justify-end`} onClick={() => setActiveSlide(index)}>
+                          {slide.imageUrl && (
+                            <img draggable={false} src={slide.imageUrl} alt={slide.title} className="w-full h-full object-contain select-none pointer-events-none drop-shadow-[0_15px_10px_rgba(0,0,0,0.2)]" />
                           )}
-                          <div className={`absolute bottom-0 w-full transition-opacity duration-300 flex justify-center ${index === activeSlide ? 'opacity-100' : 'opacity-0'}`}>
-                            <span className="bg-slate-800 text-white text-[10px] sm:text-xs font-bold px-4 py-2 rounded-full shadow-lg text-center truncate uppercase tracking-wider border border-slate-700">
+                          <div className={`absolute bottom-0 left-0 w-full transition-opacity duration-300 flex justify-center ${index === activeSlide ? 'opacity-100' : 'opacity-0'}`}>
+                            <span className="bg-slate-800 text-white text-[10px] sm:text-xs font-bold px-4 py-2 rounded-full shadow-lg text-center truncate uppercase tracking-wider w-max max-w-full z-10">
                               {slide.title}
                             </span>
                           </div>
                         </div>
                       ))}
                       
-                      <button onClick={handlePrevSlide} className="absolute left-0 sm:left-4 z-40 p-2 sm:p-2.5 bg-white/90 hover:bg-white text-slate-800 rounded-full shadow-lg backdrop-blur hover:scale-110 transition-all border border-gray-100">
-                        <ChevronLeft className="w-5 h-5" />
+                      <button onClick={handlePrevSlide} className="absolute left-0 sm:left-4 md:-left-4 z-50 p-2 sm:p-3 bg-white/90 hover:bg-white text-slate-800 rounded-full shadow-lg backdrop-blur hover:scale-110 transition-all border border-gray-100">
+                        <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
                       </button>
-                      <button onClick={handleNextSlide} className="absolute right-0 sm:right-4 z-40 p-2 sm:p-2.5 bg-white/90 hover:bg-white text-slate-800 rounded-full shadow-lg backdrop-blur hover:scale-110 transition-all border border-gray-100">
-                        <ChevronRight className="w-5 h-5" />
+                      <button onClick={handleNextSlide} className="absolute right-0 sm:right-4 md:-right-4 z-50 p-2 sm:p-3 bg-white/90 hover:bg-white text-slate-800 rounded-full shadow-lg backdrop-blur hover:scale-110 transition-all border border-gray-100">
+                        <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
                       </button>
                     </div>
                   </div>
                 </section>
 
-                {}
                 <section id="tentang-se" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-24 scroll-mt-24">
                   <div className="bg-white rounded-[2rem] sm:rounded-[3rem] p-8 sm:p-14 shadow-sm border border-gray-100 relative overflow-hidden">
                     <div className="absolute -top-20 -right-20 w-64 h-64 bg-blue-50 rounded-full opacity-50 blur-3xl"></div>
@@ -337,7 +343,6 @@
                       
                       {data.aboutImageUrl ? (
                         <div className="w-full sm:w-1/2 md:w-2/5 shrink-0 flex justify-center relative">
-                          <div className="absolute bottom-0 w-3/4 h-10 bg-black/20 blur-xl rounded-full"></div>
                           <img src={data.aboutImageUrl} alt="Tentang Kami" className="w-full max-w-[400px] h-auto object-contain relative z-10" />
                         </div>
                       ) : (
@@ -355,7 +360,6 @@
                   </div>
                 </section>
 
-                {}
                 <section id="populasi" className="mt-24 py-20 bg-slate-100 border-y border-gray-200 scroll-mt-20">
                   <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     
@@ -408,7 +412,7 @@
                 </div>
               </footer>
 
-              {}
+              {/* Autentikasi Pengaturan */}
               {isAuthOpen && (
                 <div className="fixed inset-0 z-[110] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
                   <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden">
@@ -440,7 +444,7 @@
                 </div>
               )}
 
-              {}
+              {/* Modal Pengaturan */}
               {isSettingsOpen && (
                 <div className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
                   <div className="bg-white rounded-3xl shadow-2xl w-full max-w-5xl h-[90vh] flex flex-col">
@@ -475,7 +479,6 @@
                             </div>
                           )}
 
-                          {}
                           {activeSettingsTab === 'slides' && (
                             <div className="space-y-8">
                               {settingsDraft.slides && settingsDraft.slides.map((slide, sIdx) => (
