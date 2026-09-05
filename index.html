@@ -8,9 +8,9 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1e293b">
     
-    <!-- Icon untuk Browser dan Aplikasi HP (Homescreen) -->
-    <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/d/1gOX6IqcfTfFt2VfU9Lpy69ajhQ0LtUgA">
-    <link rel="apple-touch-icon" href="https://lh3.googleusercontent.com/d/1gOX6IqcfTfFt2VfU9Lpy69ajhQ0LtUgA">
+    <!-- Icon untuk Browser dan Aplikasi HP (Homescreen) dengan Logo Baru -->
+    <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/d/1haRMrQywYO-EoFGTs45ZyTZzmq5I-Emq">
+    <link rel="apple-touch-icon" href="https://lh3.googleusercontent.com/d/1haRMrQywYO-EoFGTs45ZyTZzmq5I-Emq">
     
     <script type="importmap">
     {
@@ -37,19 +37,25 @@
         } from 'lucide-react';
 
         const APPSCRIPT_URL = "https://script.google.com/macros/s/AKfycbxkJl7PeW5VQVX4errbzpm8psAMp5RxzAPnzqCA0Smj_r3mDgRylWC-1So5ZJl2jr6d5g/exec"; 
-        const CACHE_KEY = "portal_se_data_v6"; // Versi cache diperbarui untuk menghapus ingatan foto lama
+        const CACHE_KEY = "portal_se_data_v6"; // Versi cache diperbarui untuk menghapus memori lama
 
         const defaultData = {
           settingsPassword: "123456Fa",
           hero: {
             title: "Portal Support Equipment",
             subtitle: "Pusat Informasi Operasional, Pemeliharaan, dan Manajemen Divisi",
-            imageUrl: "", // Dikosongkan agar tidak muncul foto lama
-            logoUrl: "https://lh3.googleusercontent.com/d/1gOX6IqcfTfFt2VfU9Lpy69ajhQ0LtUgA"
+            imageUrl: "", 
+            logoUrl: "https://lh3.googleusercontent.com/d/1haRMrQywYO-EoFGTs45ZyTZzmq5I-Emq" // Menggunakan logo kotak terbaru
           },
           about: "Section Support Equipment bertindak sebagai tulang punggung operasional yang menjamin kelancaran, efisiensi, dan keselamatan kerja seluruh tim di lapangan. Kami bertanggung jawab memfasilitasi kebutuhan teknis lapangan secara menyeluruh, mulai dari perawatan rutin armada seperti pengisian pelumas, greasing, dan pembersihan unit, hingga penanganan serta pengangkutan material berat secara aman dan terintegrasi.",
           aboutImageUrl: "",
-          slides: [], // Dikosongkan agar tidak bentrok dengan data sheet
+          slides: [
+            { id: "s1", title: "Kategori 1", imageUrl: "", links: [] },
+            { id: "s2", title: "Kategori 2", imageUrl: "", links: [] },
+            { id: "s3", title: "Kategori 3", imageUrl: "", links: [] },
+            { id: "s4", title: "Kategori 4", imageUrl: "", links: [] },
+            { id: "s5", title: "Kategori 5", imageUrl: "", links: [] }
+          ],
           manpower: [
             { id: "m1", label: "Staf", count: 12, icon: "User" },
             { id: "m2", label: "Admin", count: 8, icon: "ClipboardEdit" },
@@ -79,6 +85,7 @@
           const [activeSlide, setActiveSlide] = useState(0);
           const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
           
+          // State Pengaturan & Keamanan
           const [isSettingsOpen, setIsSettingsOpen] = useState(false);
           const [isAuthOpen, setIsAuthOpen] = useState(false);
           const [passwordInput, setPasswordInput] = useState("");
@@ -87,11 +94,17 @@
           const [settingsDraft, setSettingsDraft] = useState(defaultData);
           const [activeSettingsTab, setActiveSettingsTab] = useState('general');
 
+          // State untuk Efek Scroll Fading (Memudar transparan)
+          const [scrollY, setScrollY] = useState(0);
+          const [isAtBottom, setIsAtBottom] = useState(false);
+
+          // State untuk Efek Swipe Foto
           const touchStartX = useRef(null);
           const touchEndX = useRef(null);
           const isDragging = useRef(false);
           const minSwipeDistance = 50;
 
+          // Mengambil Data dari Google Sheets
           useEffect(() => {
             const fetchLatestData = async () => {
               try {
@@ -108,6 +121,20 @@
               }
             };
             fetchLatestData();
+          }, []);
+
+          // Mendeteksi Scroll untuk Efek Memudar & Scroll Lock
+          useEffect(() => {
+            const handleScroll = () => {
+              setScrollY(window.scrollY);
+              // Cek apakah scroll sudah mencapai paling bawah (batas 100px)
+              const scrollPosition = window.scrollY + window.innerHeight;
+              const bottomPosition = document.documentElement.scrollHeight - 100;
+              setIsAtBottom(scrollPosition >= bottomPosition);
+            };
+            
+            window.addEventListener('scroll', handleScroll, { passive: true });
+            return () => window.removeEventListener('scroll', handleScroll);
           }, []);
 
           useEffect(() => {
@@ -151,13 +178,14 @@
             const length = data.slides.length;
             
             let offset = (index - activeSlide + length) % length;
+            // Koreksi offset agar berada di tengah (contoh untuk 5 item: -2, -1, 0, 1, 2)
             if (offset > Math.floor(length / 2)) offset -= length;
 
-            // Foto Tengah
+            // Foto Utama Tengah
             if (offset === 0) {
               return "translate-x-0 scale-100 opacity-100 z-50 drop-shadow-[0_20px_20px_rgba(0,0,0,0.3)]";
             } 
-            // Foto Sebelah Kanan & Kiri Langsung (Dikecilkan ke 0.60)
+            // Foto Sebelah Kanan & Kiri Langsung (Lebih kecil)
             else if (offset === 1) {
               return "translate-x-[75%] sm:translate-x-[105%] scale-[0.60] opacity-75 z-40 cursor-pointer hover:opacity-100 blur-[1px]";
             } else if (offset === -1) {
@@ -165,11 +193,12 @@
             } 
             // Foto Paling Ujung Kanan & Kiri
             else if (offset === 2) {
-              return "translate-x-[140%] sm:translate-x-[200%] scale-[0.45] opacity-40 z-30 cursor-pointer hover:opacity-60 blur-[2px]";
+              return "translate-x-[140%] sm:translate-x-[200%] scale-[0.40] opacity-40 z-30 cursor-pointer hover:opacity-60 blur-[2px]";
             } else if (offset === -2) {
-              return "-translate-x-[140%] sm:-translate-x-[200%] scale-[0.45] opacity-40 z-30 cursor-pointer hover:opacity-60 blur-[2px]";
+              return "-translate-x-[140%] sm:-translate-x-[200%] scale-[0.40] opacity-40 z-30 cursor-pointer hover:opacity-60 blur-[2px]";
             }
             
+            // Sisa foto disembunyikan
             return "translate-x-0 scale-50 opacity-0 z-0 pointer-events-none hidden";
           };
 
@@ -200,7 +229,6 @@
 
           const handleSaveSettings = async () => {
             if(!settingsDraft.slides) settingsDraft.slides = [];
-            
             setData(settingsDraft); 
             localStorage.setItem(CACHE_KEY, JSON.stringify(settingsDraft));
             setIsSettingsOpen(false);
@@ -218,11 +246,11 @@
           };
 
           return (
-            <div className="min-h-screen font-sans text-slate-800 flex flex-col bg-gray-50">
+            <div className="min-h-screen font-sans text-slate-800 flex flex-col bg-gray-50 relative">
               
-              {/* HEADER */}
-              <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-sm border-b border-gray-100">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+              {/* HEADER UTAMA */}
+              <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-sm border-b border-gray-100 h-16">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
                   <div className="flex items-center cursor-pointer" onClick={() => window.scrollTo(0,0)}>
                     {data.hero?.logoUrl ? (
                       <img src={data.hero.logoUrl} alt="Logo Perusahaan" className={`h-10 sm:h-12 w-auto max-w-[250px] object-contain drop-shadow-sm ${loading ? 'animate-pulse opacity-70' : ''}`} />
@@ -253,7 +281,7 @@
                 {isMobileMenuOpen && (
                   <div className="md:hidden absolute top-16 left-0 w-full bg-white border-b border-gray-200 shadow-xl px-4 py-4 flex flex-col gap-2 z-50 rounded-b-2xl">
                     <a href="#menu" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 text-slate-700 font-bold hover:bg-gray-50 rounded-xl">Menu Akses</a>
-                    <a href="#tentang-se" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 text-slate-700 font-bold hover:bg-gray-50 rounded-xl">Tentang Kami</a>
+                    <a href="#tentang-se" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 text-slate-700 font-bold hover:bg-gray-50 rounded-xl">Tentang Support Equipment</a>
                     <a href="#populasi" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 text-slate-700 font-bold hover:bg-gray-50 rounded-xl">Populasi Data</a>
                     <div className="h-px bg-gray-100 my-2"></div>
                     <button onClick={handleOpenSettings} className="px-4 py-3 text-left text-blue-600 font-bold hover:bg-blue-50 rounded-xl flex items-center gap-3">
@@ -263,8 +291,18 @@
                 )}
               </header>
 
+              {/* OVERLAY TRANSAKSI FADE MENGHILANG (ATAS & BAWAH) */}
+              {/* Fade Atas: Muncul saat di-scroll ke bawah melewati foto Hero */}
+              <div 
+                className={`fixed top-16 left-0 w-full h-24 bg-gradient-to-b from-gray-50 via-gray-50/90 to-transparent z-40 pointer-events-none transition-opacity duration-700 ${scrollY > 350 ? 'opacity-100' : 'opacity-0'}`}
+              ></div>
+
+              {/* Fade Bawah: Hilang otomatis jika halaman mentok di Footer */}
+              <div 
+                className={`fixed bottom-0 left-0 w-full h-32 bg-gradient-to-t from-gray-50 via-gray-50/90 to-transparent z-40 pointer-events-none transition-opacity duration-700 ${!isAtBottom ? 'opacity-100' : 'opacity-0'}`}
+              ></div>
+
               <main className="flex-1 pb-10">
-                {}
                 <section className="w-full relative h-[300px] sm:h-[400px] md:h-[500px] bg-slate-900 overflow-hidden">
                   {data.hero?.imageUrl && (
                     <img src={data.hero.imageUrl} alt="Hero" className="w-full h-full object-cover opacity-80" />
@@ -282,8 +320,7 @@
                   </div>
                 </section>
 
-                {}
-                <section id="menu" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16 overflow-hidden scroll-mt-24">
+                <section id="menu" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16 overflow-hidden scroll-mt-24 relative z-10">
                   <div className="flex flex-col items-center justify-center">
                     
                     <div className="w-full max-w-5xl mb-12">
@@ -298,10 +335,10 @@
                       
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                         {(data.slides && data.slides[activeSlide]?.links) ? data.slides[activeSlide].links.map((link) => (
-                          <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer" className="group flex items-center justify-between p-4 sm:p-5 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-blue-200 transition-all duration-300 transform hover:-translate-y-1 min-h-[90px] sm:min-h-[104px]">
-                            <span className="font-bold text-slate-900 group-hover:text-blue-700 transition-colors pr-4 break-words">{link.label}</span>
-                            <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center group-hover:bg-blue-100 transition-colors shrink-0">
-                              <ChevronRight className="w-4 h-4 text-slate-600 group-hover:text-blue-600" />
+                          <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer" className="group flex items-center justify-between p-4 sm:p-5 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-gray-300 transition-all duration-300 transform hover:-translate-y-1 min-h-[104px]">
+                            <span className="font-bold text-slate-900 group-hover:text-black transition-colors pr-4">{link.label}</span>
+                            <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-gray-200 transition-colors shrink-0">
+                              <ChevronRight className="w-4 h-4 text-slate-700 group-hover:text-black" />
                             </div>
                           </a>
                         )) : (
@@ -315,12 +352,12 @@
                       onMouseDown={handleDragStart} onMouseMove={handleDragMove} onMouseUp={handleDragEnd} onMouseLeave={handleMouseLeave}>
                       
                       {data.slides && data.slides.map((slide, index) => (
-                        <div key={slide.id} className={`absolute w-[130px] sm:w-[170px] h-[180px] sm:h-[240px] transition-all duration-[800ms] ease-in-out bg-transparent ${getSlideStyle(index)} flex flex-col justify-end items-center`} onClick={() => setActiveSlide(index)}>
+                        <div key={slide.id} className={`absolute w-[130px] sm:w-[170px] h-[180px] sm:h-[240px] transition-all duration-[800ms] ease-in-out bg-transparent ${getSlideStyle(index)} flex flex-col justify-end`} onClick={() => setActiveSlide(index)}>
                           {slide.imageUrl && (
                             <img draggable={false} src={slide.imageUrl} alt={slide.title} className="w-full h-full object-contain select-none pointer-events-none drop-shadow-[0_15px_15px_rgba(0,0,0,0.25)]" />
                           )}
-                          <div className={`absolute bottom-0 w-max max-w-[120%] transition-opacity duration-300 flex justify-center ${index === activeSlide ? 'opacity-100' : 'opacity-0'} z-20`}>
-                            <span className="bg-slate-800 text-white text-[10px] sm:text-xs font-bold px-4 py-2 rounded-full shadow-lg text-center uppercase tracking-wider">
+                          <div className={`absolute -bottom-2 left-0 w-full transition-opacity duration-300 flex justify-center ${index === activeSlide ? 'opacity-100' : 'opacity-0'}`}>
+                            <span className="bg-slate-800 text-white text-[11px] sm:text-xs font-bold px-4 py-2 rounded-xl shadow-lg text-center truncate uppercase tracking-wider w-max max-w-full z-10 border border-slate-700">
                               {slide.title}
                             </span>
                           </div>
@@ -337,10 +374,9 @@
                   </div>
                 </section>
 
-                {}
-                <section id="tentang-se" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-24 scroll-mt-24">
+                <section id="tentang-se" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-28 scroll-mt-24 relative z-10">
                   <div className="bg-white rounded-[2rem] sm:rounded-[3rem] p-8 sm:p-14 shadow-sm border border-gray-100 relative overflow-hidden">
-                    <div className="absolute -top-20 -right-20 w-64 h-64 bg-red-50 rounded-full opacity-50 blur-3xl"></div>
+                    <div className="absolute -top-20 -right-20 w-64 h-64 bg-blue-50 rounded-full opacity-50 blur-3xl"></div>
                     <div className="relative z-10 flex flex-col md:flex-row gap-8 sm:gap-12 items-center">
                       
                       {data.aboutImageUrl ? (
@@ -348,7 +384,7 @@
                           <img src={data.aboutImageUrl} alt="Tentang Kami" className="w-full max-w-[400px] h-auto object-contain relative z-10" />
                         </div>
                       ) : (
-                        <div className="w-20 h-20 bg-red-50 text-red-600 rounded-3xl flex items-center justify-center shrink-0 shadow-sm border border-red-100">
+                        <div className="w-20 h-20 bg-blue-50 text-blue-600 rounded-3xl flex items-center justify-center shrink-0 shadow-sm border border-blue-100">
                           <FileText className="w-10 h-10" />
                         </div>
                       )}
@@ -356,14 +392,13 @@
                       <div className="flex-1">
                         <h2 className="text-4xl sm:text-5xl font-black text-slate-800 mb-2 tracking-tight uppercase">TENTANG KAMI</h2>
                         <h3 className="text-xl sm:text-2xl font-bold text-red-600 tracking-widest mb-8 uppercase">Support Equipment</h3>
-                        <p className="text-slate-600 leading-[2.2rem] sm:leading-[2.5rem] text-lg sm:text-xl font-medium text-justify whitespace-pre-wrap">{data.about}</p>
+                        <p className="text-slate-600 leading-[2.2rem] sm:leading-[2.8rem] text-xl sm:text-2xl font-medium text-justify whitespace-pre-wrap">{data.about}</p>
                       </div>
                     </div>
                   </div>
                 </section>
 
-                {}
-                <section id="populasi" className="mt-24 py-20 bg-slate-100 border-y border-gray-200 scroll-mt-20">
+                <section id="populasi" className="mt-28 py-20 bg-slate-100 border-y border-gray-200 scroll-mt-20 relative z-10">
                   <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     
                     <div className="mb-24">
@@ -409,13 +444,13 @@
                 </section>
               </main>
 
-              <footer className="bg-white py-6">
+              <footer className="bg-white py-6 relative z-10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-col items-center justify-center">
                   <span className="italic text-slate-400/80 text-sm font-medium">created by fadillahm</span>
                 </div>
               </footer>
 
-              {}
+              {/* Autentikasi Pengaturan */}
               {isAuthOpen && (
                 <div className="fixed inset-0 z-[110] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
                   <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden">
@@ -434,7 +469,7 @@
                         value={passwordInput}
                         onChange={(e) => setPasswordInput(e.target.value)}
                         placeholder="Masukkan Kata Sandi"
-                        className="w-full p-4 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none mb-2 text-center text-lg tracking-widest font-bold"
+                        className="w-full p-4 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none mb-2 text-center text-lg tracking-widest"
                         autoFocus
                       />
                       {authError && <p className="text-red-500 text-sm font-medium mb-4 text-center">{authError}</p>}
@@ -447,7 +482,7 @@
                 </div>
               )}
 
-              {}
+              {/* Modal Pengaturan */}
               {isSettingsOpen && (
                 <div className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
                   <div className="bg-white rounded-3xl shadow-2xl w-full max-w-5xl h-[90vh] flex flex-col">
@@ -513,12 +548,12 @@
                                     <div className="space-y-2">
                                       {slide.links?.map((link, lIdx) => (
                                         <div key={link.id || lIdx} className="flex flex-col sm:flex-row gap-2 bg-gray-50 p-2 rounded-xl border border-gray-100">
-                                          <input type="text" placeholder="Nama Tombol" value={link.label} onChange={e => { const newSlides = [...settingsDraft.slides]; newSlides[sIdx].links[lIdx].label = e.target.value; setSettingsDraft({...settingsDraft, slides: newSlides}); }} className="flex-1 w-full p-2.5 border border-gray-200 rounded-lg text-sm font-medium" />
+                                          <input type="text" placeholder="Nama Tombol" value={link.label} onChange={e => { const newSlides = [...settingsDraft.slides]; newSlides[sIdx].links[lIdx].label = e.target.value; setSettingsDraft({...settingsDraft, slides: newSlides}); }} className="flex-1 w-full p-2.5 border border-gray-200 rounded-lg text-sm" />
                                           <input type="text" placeholder="URL Target" value={link.url} onChange={e => { const newSlides = [...settingsDraft.slides]; newSlides[sIdx].links[lIdx].url = e.target.value; setSettingsDraft({...settingsDraft, slides: newSlides}); }} className="flex-1 w-full p-2.5 border border-gray-200 rounded-lg text-sm" />
                                           <button onClick={() => { const newSlides = [...settingsDraft.slides]; newSlides[sIdx].links.splice(lIdx, 1); setSettingsDraft({...settingsDraft, slides: newSlides}); }} className="p-2.5 text-red-500 hover:bg-red-100 rounded-lg self-end sm:self-auto"><Trash2 className="w-4 h-4" /></button>
                                         </div>
                                       ))}
-                                      <button onClick={() => { const newSlides = [...settingsDraft.slides]; if (!newSlides[sIdx].links) newSlides[sIdx].links = []; newSlides[sIdx].links.push({ id: Date.now().toString(), label: "Tautan Baru", url: "" }); setSettingsDraft({...settingsDraft, slides: newSlides}); }} className="flex items-center gap-1 text-sm text-blue-600 hover:bg-blue-50 py-2.5 px-3 rounded-lg font-bold transition-colors"><Plus className="w-4 h-4" /> Tambah Tautan</button>
+                                      <button onClick={() => { const newSlides = [...settingsDraft.slides]; if (!newSlides[sIdx].links) newSlides[sIdx].links = []; newSlides[sIdx].links.push({ id: Date.now().toString(), label: "Tautan Baru", url: "" }); setSettingsDraft({...settingsDraft, slides: newSlides}); }} className="flex items-center gap-1 text-sm text-blue-600 hover:bg-blue-50 py-2.5 px-3 rounded-lg font-semibold transition-colors"><Plus className="w-4 h-4" /> Tambah Tautan</button>
                                     </div>
                                   </div>
                                 </div>
@@ -584,7 +619,7 @@
                                     type="text" 
                                     value={settingsDraft.settingsPassword || ''} 
                                     onChange={e => setSettingsDraft({...settingsDraft, settingsPassword: e.target.value})} 
-                                    className="w-full p-4 border border-gray-300 rounded-xl bg-white focus:ring-2 focus:ring-red-500 font-mono tracking-wider font-bold" 
+                                    className="w-full p-4 border border-gray-300 rounded-xl bg-white focus:ring-2 focus:ring-red-500 font-mono tracking-wider" 
                                   />
                                 </div>
                               </div>
