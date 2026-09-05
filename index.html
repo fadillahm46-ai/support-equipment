@@ -8,6 +8,10 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1e293b">
     
+    <!-- Icon untuk Browser dan Aplikasi HP (Homescreen) -->
+    <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/d/1gOX6IqcfTfFt2VfU9Lpy69ajhQ0LtUgA">
+    <link rel="apple-touch-icon" href="https://lh3.googleusercontent.com/d/1gOX6IqcfTfFt2VfU9Lpy69ajhQ0LtUgA">
+    
     <script type="importmap">
     {
         "imports": {
@@ -33,7 +37,7 @@
         } from 'lucide-react';
 
         const APPSCRIPT_URL = "https://script.google.com/macros/s/AKfycbxkJl7PeW5VQVX4errbzpm8psAMp5RxzAPnzqCA0Smj_r3mDgRylWC-1So5ZJl2jr6d5g/exec"; 
-        const CACHE_KEY = "portal_se_data_v4";
+        const CACHE_KEY = "portal_se_data_v5";
 
         const defaultData = {
           settingsPassword: "123456Fa",
@@ -41,14 +45,14 @@
             title: "Portal Support Equipment",
             subtitle: "Pusat Informasi Operasional, Pemeliharaan, dan Manajemen Divisi",
             imageUrl: "https://lh3.googleusercontent.com/d/1x2INLTU76tuRcg_e4l3TLHeKBrXg4z6N", 
-            logoUrl: ""
+            logoUrl: "https://lh3.googleusercontent.com/d/1gOX6IqcfTfFt2VfU9Lpy69ajhQ0LtUgA"
           },
           about: "Section Support Equipment bertindak sebagai tulang punggung operasional yang menjamin kelancaran, efisiensi, dan keselamatan kerja seluruh tim di lapangan. Kami bertanggung jawab memfasilitasi kebutuhan teknis lapangan secara menyeluruh, mulai dari perawatan rutin armada seperti pengisian pelumas, greasing, dan pembersihan unit, hingga penanganan serta pengangkutan material berat secara aman dan terintegrasi.",
           aboutImageUrl: "",
           slides: [
-            { id: "s1", title: "LUKMANUL HAKIM", imageUrl: "", links: [] },
-            { id: "s2", title: "FADILLAH", imageUrl: "", links: [] },
-            { id: "s3", title: "OPERASIONAL", imageUrl: "", links: [] }
+            { id: "s1", title: "Kategori 1", imageUrl: "", links: [] },
+            { id: "s2", title: "Kategori 2", imageUrl: "", links: [] },
+            { id: "s3", title: "Kategori 3", imageUrl: "", links: [] }
           ],
           manpower: [
             { id: "m1", label: "Staf", count: 12, icon: "User" },
@@ -156,7 +160,7 @@
 
             // Foto Tengah
             if (offset === 0) {
-              return "translate-x-0 scale-100 opacity-100 z-50 drop-shadow-[0_15px_15px_rgba(0,0,0,0.4)]";
+              return "translate-x-0 scale-100 opacity-100 z-50 drop-shadow-[0_20px_20px_rgba(0,0,0,0.3)]";
             } 
             // Foto Sebelah Kanan & Kiri Langsung
             else if (offset === 1) {
@@ -316,7 +320,7 @@
                       {data.slides && data.slides.map((slide, index) => (
                         <div key={slide.id} className={`absolute w-[130px] sm:w-[170px] h-[180px] sm:h-[240px] transition-all duration-700 ease-out bg-transparent ${getSlideStyle(index)} flex flex-col justify-end`} onClick={() => setActiveSlide(index)}>
                           {slide.imageUrl && (
-                            <img draggable={false} src={slide.imageUrl} alt={slide.title} className="w-full h-full object-contain select-none pointer-events-none drop-shadow-[0_15px_10px_rgba(0,0,0,0.2)]" />
+                            <img draggable={false} src={slide.imageUrl} alt={slide.title} className="w-full h-full object-contain select-none pointer-events-none" />
                           )}
                           <div className={`absolute bottom-0 left-0 w-full transition-opacity duration-300 flex justify-center ${index === activeSlide ? 'opacity-100' : 'opacity-0'}`}>
                             <span className="bg-slate-800 text-white text-[10px] sm:text-xs font-bold px-4 py-2 rounded-full shadow-lg text-center truncate uppercase tracking-wider w-max max-w-full z-10">
@@ -609,3 +613,7 @@
     </script>
 </body>
 </html>
+```
+
+### Langkah Selanjutnya:
+Untuk mengaktifkan PWA Install, Anda tidak perlu mengubah file HTML ini lagi. Anda hanya perlu membuat file `manifest.json` di dalam folder proyek Anda dengan petunjuk yang telah saya berikan sebelumnya.
