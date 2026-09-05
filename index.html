@@ -18,15 +18,8 @@
     }
     </script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-    <style>
-      /* Mencegah scroll saat menu/modal terbuka */
-      body.modal-open { overflow: hidden; }
-      /* Smooth scrolling */
-      html { scroll-behavior: smooth; }
-    </style>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans antialiased overflow-x-hidden">
+<body class="bg-gray-100 text-gray-800 font-sans antialiased overflow-x-hidden">
     <div id="root"></div>
 
     <script type="text/babel" data-type="module">
@@ -40,7 +33,7 @@
         } from 'lucide-react';
 
         const APPSCRIPT_URL = "https://script.google.com/macros/s/AKfycbxkJl7PeW5VQVX4errbzpm8psAMp5RxzAPnzqCA0Smj_r3mDgRylWC-1So5ZJl2jr6d5g/exec"; 
-        const CACHE_KEY = "portal_se_data_v2";
+        const CACHE_KEY = "portal_se_data_v3";
 
         const defaultData = {
           settingsPassword: "123456Fa",
@@ -50,7 +43,7 @@
             imageUrl: "", 
             logoUrl: ""
           },
-          about: "Divisi Support Equipment berdedikasi untuk memastikan seluruh alat berat, kendaraan operasional, dan perlengkapan logistik selalu dalam kondisi prima. Kami mendukung kelancaran operasional harian dengan standar keselamatan tinggi.",
+          about: "Section Support Equipment bertindak sebagai tulang punggung operasional yang menjamin kelancaran, efisiensi, dan keselamatan kerja seluruh tim di lapangan. Kami bertanggung jawab memfasilitasi kebutuhan teknis lapangan secara menyeluruh, mulai dari perawatan rutin armada seperti pengisian pelumas, greasing, dan pembersihan unit, hingga penanganan serta pengangkutan material berat secara aman dan terintegrasi.",
           aboutImageUrl: "",
           slides: [
             { id: "s1", title: "Pemeliharaan (Maintenance)", imageUrl: "", links: [] },
@@ -123,8 +116,8 @@
           }, []);
 
           useEffect(() => {
-            if (isSettingsOpen || isAuthOpen) document.body.classList.add('modal-open');
-            else document.body.classList.remove('modal-open');
+            if (isSettingsOpen || isAuthOpen) document.body.classList.add('overflow-hidden');
+            else document.body.classList.remove('overflow-hidden');
           }, [isSettingsOpen, isAuthOpen]);
 
           const handleDragStart = (e) => {
@@ -164,7 +157,7 @@
             let offset = (index - activeSlide + length) % length;
             if (offset > Math.floor(length / 2)) offset -= length;
 
-            if (offset === 0) return "translate-x-0 scale-100 opacity-100 z-30";
+            if (offset === 0) return "translate-x-0 scale-100 opacity-100 z-30 drop-shadow-xl";
             if (offset === 1 || (offset < 0 && index === activeSlide + 1)) return "translate-x-[90%] sm:translate-x-[110%] scale-[0.8] opacity-50 z-20 cursor-pointer hover:opacity-75 blur-[1px]";
             if (offset === -1 || (offset > 0 && index === activeSlide - 1)) return "-translate-x-[90%] sm:-translate-x-[110%] scale-[0.8] opacity-50 z-20 cursor-pointer hover:opacity-75 blur-[1px]";
             return "translate-x-0 scale-50 opacity-0 z-0 pointer-events-none";
@@ -215,13 +208,13 @@
           };
 
           return (
-            <div className="min-h-screen font-sans text-slate-800 flex flex-col">
+            <div className="min-h-screen font-sans text-slate-800 flex flex-col bg-gray-50">
               
               <header className="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-100">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                   <div className="flex items-center cursor-pointer" onClick={() => window.scrollTo(0,0)}>
                     {data.hero?.logoUrl ? (
-                      <img src={data.hero.logoUrl} alt="Logo Perusahaan" className={`h-10 sm:h-12 w-auto max-w-[250px] object-contain drop-shadow-sm ${loading ? 'animate-pulse' : ''}`} />
+                      <img src={data.hero.logoUrl} alt="Logo Perusahaan" className={`h-10 sm:h-12 w-auto max-w-[250px] object-contain drop-shadow-sm ${loading ? 'animate-pulse opacity-70' : ''}`} />
                     ) : (
                       <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-600 to-orange-500 text-white rounded-xl flex items-center justify-center font-black text-xl shadow-md">
                         {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "SE"}
@@ -246,6 +239,7 @@
                   </div>
                 </div>
 
+                {}
                 {isMobileMenuOpen && (
                   <div className="md:hidden absolute top-16 left-0 w-full bg-white border-b border-gray-200 shadow-lg px-4 py-4 flex flex-col gap-2 z-50">
                     <a href="#menu" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 text-slate-700 font-medium hover:bg-gray-50 rounded-xl">Menu Akses</a>
@@ -260,6 +254,7 @@
               </header>
 
               <main className="flex-1 pb-10">
+                {}
                 <section className="w-full relative h-[300px] sm:h-[450px] bg-slate-900 overflow-hidden">
                   {data.hero?.imageUrl && (
                     <img src={data.hero.imageUrl} alt="Hero" className="w-full h-full object-cover opacity-80" />
@@ -277,15 +272,16 @@
                   </div>
                 </section>
 
+                {}
                 <section id="menu" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16 overflow-hidden scroll-mt-24">
                   <div className="flex flex-col items-center justify-center">
                     
                     <div className="w-full max-w-5xl mb-12">
                       <div className="flex items-center justify-start mb-8 px-2 gap-3 sm:gap-4">
-                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow-lg shrink-0">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-slate-800 text-white flex items-center justify-center shadow-lg shrink-0">
                           <LayoutGrid className="w-5 h-5 sm:w-6 sm:h-6" />
                         </div>
-                        <h3 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-widest uppercase">
+                        <h3 className="text-2xl sm:text-3xl font-black text-slate-800 tracking-widest uppercase">
                           MENU
                         </h3>
                       </div>
@@ -311,12 +307,12 @@
                       {data.slides && data.slides.map((slide, index) => (
                         <div key={slide.id} className={`absolute w-[130px] sm:w-[170px] h-[180px] sm:h-[240px] transition-all duration-700 ease-out bg-transparent ${getSlideStyle(index)}`} onClick={() => setActiveSlide(index)}>
                           {slide.imageUrl ? (
-                            <img draggable={false} src={slide.imageUrl} alt={slide.title} className="w-full h-full object-contain rounded-2xl sm:rounded-3xl select-none pointer-events-none drop-shadow-[0_15px_15px_rgba(0,0,0,0.3)]" />
+                            <img draggable={false} src={slide.imageUrl} alt={slide.title} className="w-full h-full object-contain drop-shadow-[0_15px_15px_rgba(0,0,0,0.3)] select-none pointer-events-none" />
                           ) : (
-                            <div className="w-full h-full rounded-2xl sm:rounded-3xl border-2 border-dashed border-gray-300 bg-gray-50/50 flex items-center justify-center pointer-events-none"></div>
+                            <div className="w-full h-full flex items-center justify-center pointer-events-none"></div>
                           )}
-                          <div className={`absolute -bottom-2 sm:-bottom-3 w-full px-2 sm:px-3 transition-opacity duration-300 flex justify-center ${index === activeSlide ? 'opacity-100' : 'opacity-0'}`}>
-                            <span className="bg-slate-800 text-white text-[10px] sm:text-xs font-bold px-3 py-1.5 sm:py-2 rounded-full shadow-lg text-center truncate w-full uppercase tracking-wider">
+                          <div className={`absolute bottom-0 w-full transition-opacity duration-300 flex justify-center ${index === activeSlide ? 'opacity-100' : 'opacity-0'}`}>
+                            <span className="bg-slate-800 text-white text-[10px] sm:text-xs font-bold px-4 py-2 rounded-full shadow-lg text-center truncate uppercase tracking-wider border border-slate-700">
                               {slide.title}
                             </span>
                           </div>
@@ -333,14 +329,16 @@
                   </div>
                 </section>
 
+                {}
                 <section id="tentang-se" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-24 scroll-mt-24">
                   <div className="bg-white rounded-[2rem] sm:rounded-[3rem] p-8 sm:p-14 shadow-sm border border-gray-100 relative overflow-hidden">
                     <div className="absolute -top-20 -right-20 w-64 h-64 bg-blue-50 rounded-full opacity-50 blur-3xl"></div>
-                    <div className="relative z-10 flex flex-col md:flex-row gap-8 sm:gap-12 items-start md:items-center">
+                    <div className="relative z-10 flex flex-col md:flex-row gap-8 sm:gap-12 items-center">
                       
                       {data.aboutImageUrl ? (
-                        <div className="w-full sm:w-1/3 md:w-2/5 shrink-0 flex justify-center">
-                          <img src={data.aboutImageUrl} alt="Tentang Kami" className="w-full max-w-[350px] h-auto object-contain" />
+                        <div className="w-full sm:w-1/2 md:w-2/5 shrink-0 flex justify-center relative">
+                          <div className="absolute bottom-0 w-3/4 h-10 bg-black/20 blur-xl rounded-full"></div>
+                          <img src={data.aboutImageUrl} alt="Tentang Kami" className="w-full max-w-[400px] h-auto object-contain relative z-10" />
                         </div>
                       ) : (
                         <div className="w-20 h-20 bg-blue-50 text-blue-600 rounded-3xl flex items-center justify-center shrink-0 shadow-sm border border-blue-100">
@@ -349,13 +347,15 @@
                       )}
                       
                       <div className="flex-1">
-                        <h2 className="text-3xl sm:text-4xl font-black text-slate-800 mb-6 tracking-tight">Tentang Support Equipment</h2>
-                        <p className="text-slate-600 leading-relaxed text-lg sm:text-xl font-medium text-justify whitespace-pre-wrap">{data.about}</p>
+                        <h2 className="text-4xl sm:text-5xl font-black text-slate-800 mb-2 tracking-tight uppercase">TENTANG KAMI</h2>
+                        <h3 className="text-xl sm:text-2xl font-bold text-red-600 tracking-widest mb-8 uppercase">Support Equipment</h3>
+                        <p className="text-slate-600 leading-[2rem] sm:leading-[2.5rem] text-xl sm:text-2xl font-medium text-justify whitespace-pre-wrap">{data.about}</p>
                       </div>
                     </div>
                   </div>
                 </section>
 
+                {}
                 <section id="populasi" className="mt-24 py-20 bg-slate-100 border-y border-gray-200 scroll-mt-20">
                   <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     
@@ -408,6 +408,7 @@
                 </div>
               </footer>
 
+              {}
               {isAuthOpen && (
                 <div className="fixed inset-0 z-[110] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
                   <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden">
@@ -439,6 +440,7 @@
                 </div>
               )}
 
+              {}
               {isSettingsOpen && (
                 <div className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
                   <div className="bg-white rounded-3xl shadow-2xl w-full max-w-5xl h-[90vh] flex flex-col">
@@ -473,14 +475,33 @@
                             </div>
                           )}
 
+                          {}
                           {activeSettingsTab === 'slides' && (
                             <div className="space-y-8">
                               {settingsDraft.slides && settingsDraft.slides.map((slide, sIdx) => (
                                 <div key={slide.id || sIdx} className="p-5 border border-gray-200 rounded-2xl bg-white shadow-sm space-y-4">
+                                  
+                                  <div className="flex justify-between items-center pb-2 border-b border-gray-100">
+                                    <h4 className="text-sm font-bold text-slate-700">Kategori {sIdx + 1}</h4>
+                                    <button 
+                                      onClick={() => { 
+                                        if(window.confirm('Yakin ingin menghapus kategori ini?')) {
+                                          const newSlides = [...settingsDraft.slides]; 
+                                          newSlides.splice(sIdx, 1); 
+                                          setSettingsDraft({...settingsDraft, slides: newSlides}); 
+                                        }
+                                      }} 
+                                      className="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg flex items-center gap-2 text-xs font-bold transition-colors"
+                                    >
+                                      <Trash2 className="w-4 h-4" /> Hapus Kategori
+                                    </button>
+                                  </div>
+
                                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div><label className="block text-xs font-bold text-gray-600 uppercase mb-1">Nama Kategori</label><input type="text" value={slide.title} onChange={e => { const newSlides = [...settingsDraft.slides]; newSlides[sIdx].title = e.target.value; setSettingsDraft({...settingsDraft, slides: newSlides}); }} className="w-full p-2.5 border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 font-semibold" /></div>
                                     <div><label className="block text-xs font-bold text-gray-600 uppercase mb-1">URL Foto (Carousel)</label><input type="text" value={slide.imageUrl} onChange={e => { const newSlides = [...settingsDraft.slides]; newSlides[sIdx].imageUrl = e.target.value; setSettingsDraft({...settingsDraft, slides: newSlides}); }} className="w-full p-2.5 border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 text-sm" /></div>
                                   </div>
+                                  
                                   <div className="pt-4 border-t border-gray-100">
                                     <label className="block text-xs font-bold text-blue-600 uppercase mb-3">Tautan di Dalam Kategori Ini</label>
                                     <div className="space-y-2">
@@ -491,11 +512,27 @@
                                           <button onClick={() => { const newSlides = [...settingsDraft.slides]; newSlides[sIdx].links.splice(lIdx, 1); setSettingsDraft({...settingsDraft, slides: newSlides}); }} className="p-2.5 text-red-500 hover:bg-red-100 rounded-lg self-end sm:self-auto"><Trash2 className="w-4 h-4" /></button>
                                         </div>
                                       ))}
-                                      <button onClick={() => { const newSlides = [...settingsDraft.slides]; if (!newSlides[sIdx].links) newSlides[sIdx].links = []; newSlides[sIdx].links.push({ id: Date.now().toString(), label: "Tautan Baru", url: "" }); setSettingsDraft({...settingsDraft, slides: newSlides}); }} className="flex items-center gap-1 text-sm text-blue-600 hover:bg-blue-50 py-2.5 px-3 rounded-lg font-semibold"><Plus className="w-4 h-4" /> Tambah Tautan</button>
+                                      <button onClick={() => { const newSlides = [...settingsDraft.slides]; if (!newSlides[sIdx].links) newSlides[sIdx].links = []; newSlides[sIdx].links.push({ id: Date.now().toString(), label: "Tautan Baru", url: "" }); setSettingsDraft({...settingsDraft, slides: newSlides}); }} className="flex items-center gap-1 text-sm text-blue-600 hover:bg-blue-50 py-2.5 px-3 rounded-lg font-semibold transition-colors"><Plus className="w-4 h-4" /> Tambah Tautan</button>
                                     </div>
                                   </div>
                                 </div>
                               ))}
+
+                              {/* TOMBOL TAMBAH KATEGORI BARU */}
+                              <button 
+                                onClick={() => { 
+                                  const newSlides = [...(settingsDraft.slides || []), { 
+                                    id: Date.now().toString(), 
+                                    title: "Kategori Baru", 
+                                    imageUrl: "", 
+                                    links: [] 
+                                  }];
+                                  setSettingsDraft({...settingsDraft, slides: newSlides}); 
+                                }} 
+                                className="w-full flex items-center justify-center gap-2 py-4 border-2 border-dashed border-blue-300 rounded-2xl text-blue-600 hover:text-blue-700 hover:border-blue-400 hover:bg-blue-50 font-bold transition-colors"
+                              >
+                                <Plus className="w-5 h-5" /> Tambah Kategori Baru
+                              </button>
                             </div>
                           )}
 
