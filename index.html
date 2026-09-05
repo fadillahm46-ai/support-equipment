@@ -44,7 +44,7 @@
           hero: {
             title: "Portal Support Equipment",
             subtitle: "Pusat Informasi Operasional, Pemeliharaan, dan Manajemen Divisi",
-            imageUrl: "", 
+            imageUrl: "https://lh3.googleusercontent.com/d/1x2INLTU76tuRcg_e4l3TLHeKBrXg4z6N", 
             logoUrl: "https://lh3.googleusercontent.com/d/1gOX6IqcfTfFt2VfU9Lpy69ajhQ0LtUgA"
           },
           about: "Section Support Equipment bertindak sebagai tulang punggung operasional yang menjamin kelancaran, efisiensi, dan keselamatan kerja seluruh tim di lapangan. Kami bertanggung jawab memfasilitasi kebutuhan teknis lapangan secara menyeluruh, mulai dari perawatan rutin armada seperti pengisian pelumas, greasing, dan pembersihan unit, hingga penanganan serta pengangkutan material berat secara aman dan terintegrasi.",
@@ -157,26 +157,27 @@
             let offset = (index - activeSlide + length) % length;
             // Koreksi offset agar berada di tengah (contoh untuk 5 item: -2, -1, 0, 1, 2)
             if (offset > Math.floor(length / 2)) offset -= length;
+            if (length % 2 === 0 && offset === length / 2) offset = 2;
 
-            // Foto Tengah
+            // Foto Utama Tengah
             if (offset === 0) {
               return "translate-x-0 scale-100 opacity-100 z-50 drop-shadow-[0_20px_20px_rgba(0,0,0,0.3)]";
             } 
-            // Foto Sebelah Kanan & Kiri Langsung
+            // Foto Sebelah Kanan & Kiri (Skala dikecilkan dari 0.85 ke 0.60)
             else if (offset === 1) {
-              return "translate-x-[75%] sm:translate-x-[105%] scale-[0.85] opacity-75 z-40 cursor-pointer hover:opacity-100 blur-[1px]";
+              return "translate-x-[70%] sm:translate-x-[95%] scale-[0.60] opacity-80 z-40 cursor-pointer hover:opacity-100 blur-[1px]";
             } else if (offset === -1) {
-              return "-translate-x-[75%] sm:-translate-x-[105%] scale-[0.85] opacity-75 z-40 cursor-pointer hover:opacity-100 blur-[1px]";
+              return "-translate-x-[70%] sm:-translate-x-[95%] scale-[0.60] opacity-80 z-40 cursor-pointer hover:opacity-100 blur-[1px]";
             } 
-            // Foto Paling Ujung Kanan & Kiri
+            // Foto Paling Ujung Kanan & Kiri (Skala dikecilkan dari 0.65 ke 0.45)
             else if (offset === 2) {
-              return "translate-x-[140%] sm:translate-x-[200%] scale-[0.65] opacity-40 z-30 cursor-pointer hover:opacity-60 blur-[2px]";
+              return "translate-x-[130%] sm:translate-x-[180%] scale-[0.45] opacity-40 z-30 cursor-pointer hover:opacity-60 blur-[2px]";
             } else if (offset === -2) {
-              return "-translate-x-[140%] sm:-translate-x-[200%] scale-[0.65] opacity-40 z-30 cursor-pointer hover:opacity-60 blur-[2px]";
+              return "-translate-x-[130%] sm:-translate-x-[180%] scale-[0.45] opacity-40 z-30 cursor-pointer hover:opacity-60 blur-[2px]";
             }
             
             // Sisa foto disembunyikan
-            return "translate-x-0 scale-50 opacity-0 z-0 pointer-events-none hidden";
+            return "translate-x-0 scale-[0.3] opacity-0 z-0 pointer-events-none hidden";
           };
 
           const handleOpenSettings = () => {
@@ -289,6 +290,7 @@
                 <section id="menu" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16 overflow-hidden scroll-mt-24">
                   <div className="flex flex-col items-center justify-center">
                     
+                    {}
                     <div className="w-full max-w-5xl mb-12">
                       <div className="flex items-center justify-start mb-8 px-2 gap-3 sm:gap-4">
                         <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-slate-800 text-white flex items-center justify-center shadow-lg shrink-0">
@@ -301,10 +303,10 @@
                       
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                         {(data.slides && data.slides[activeSlide]?.links) ? data.slides[activeSlide].links.map((link) => (
-                          <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer" className="group flex items-center justify-between p-4 sm:p-5 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-blue-200 transition-all duration-300 transform hover:-translate-y-1">
-                            <span className="font-semibold text-slate-700 group-hover:text-blue-700 transition-colors truncate pr-4">{link.label}</span>
-                            <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center group-hover:bg-blue-100 transition-colors shrink-0">
-                              <ChevronRight className="w-4 h-4 text-blue-600" />
+                          <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer" className="group flex items-center justify-between p-4 sm:p-5 bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1">
+                            <span className="font-bold text-black transition-colors truncate pr-4">{link.label}</span>
+                            <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-gray-200 transition-colors shrink-0">
+                              <ChevronRight className="w-4 h-4 text-black" />
                             </div>
                           </a>
                         )) : (
@@ -313,17 +315,18 @@
                       </div>
                     </div>
 
+                    {}
                     <div className="relative w-full max-w-full md:max-w-5xl h-[220px] sm:h-[300px] flex items-center justify-center perspective-1000 cursor-grab active:cursor-grabbing touch-pan-y mt-4"
                       onTouchStart={handleDragStart} onTouchMove={handleDragMove} onTouchEnd={handleDragEnd}
                       onMouseDown={handleDragStart} onMouseMove={handleDragMove} onMouseUp={handleDragEnd} onMouseLeave={handleMouseLeave}>
                       
                       {data.slides && data.slides.map((slide, index) => (
-                        <div key={slide.id} className={`absolute w-[130px] sm:w-[170px] h-[180px] sm:h-[240px] transition-all duration-700 ease-out bg-transparent ${getSlideStyle(index)} flex flex-col justify-end`} onClick={() => setActiveSlide(index)}>
+                        <div key={slide.id} className={`absolute w-[130px] sm:w-[170px] h-[180px] sm:h-[240px] transition-all duration-[800ms] ease-in-out bg-transparent ${getSlideStyle(index)} flex flex-col justify-end items-center`} onClick={() => setActiveSlide(index)}>
                           {slide.imageUrl && (
                             <img draggable={false} src={slide.imageUrl} alt={slide.title} className="w-full h-full object-contain select-none pointer-events-none" />
                           )}
-                          <div className={`absolute bottom-0 left-0 w-full transition-opacity duration-300 flex justify-center ${index === activeSlide ? 'opacity-100' : 'opacity-0'}`}>
-                            <span className="bg-slate-800 text-white text-[10px] sm:text-xs font-bold px-4 py-2 rounded-full shadow-lg text-center truncate uppercase tracking-wider w-max max-w-full z-10">
+                          <div className={`absolute bottom-0 w-full transition-opacity duration-300 flex justify-center translate-y-3 sm:translate-y-4 ${index === activeSlide ? 'opacity-100' : 'opacity-0'}`}>
+                            <span className="bg-slate-800 text-white text-[10px] sm:text-xs font-bold px-4 py-2.5 rounded-lg shadow-lg text-center truncate uppercase tracking-wider w-max max-w-[110%] z-10 border border-slate-700">
                               {slide.title}
                             </span>
                           </div>
@@ -416,7 +419,7 @@
                 </div>
               </footer>
 
-              {/* Autentikasi Pengaturan */}
+              {}
               {isAuthOpen && (
                 <div className="fixed inset-0 z-[110] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
                   <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden">
@@ -448,7 +451,7 @@
                 </div>
               )}
 
-              {/* Modal Pengaturan */}
+              {}
               {isSettingsOpen && (
                 <div className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
                   <div className="bg-white rounded-3xl shadow-2xl w-full max-w-5xl h-[90vh] flex flex-col">
